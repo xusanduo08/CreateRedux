@@ -9,3 +9,6 @@ saga是一个redux中间件
 effect是一个javascript对象，里面包含描述副作用的信息，可以通过yield传达给sagaMiddleware执行。
 
 在redux-saga世界里，所有的effect都必须被yield才会被执行
+
+__yield表达式本身没有返回值__
+
