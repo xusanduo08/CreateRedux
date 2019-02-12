@@ -4,6 +4,8 @@ export default (state={}, action) =>{
             return {...state};
         case 'PAUSE':
             return {...state};
+        case 'END':
+            return {...action.payload}
         default:
             return state;
     }

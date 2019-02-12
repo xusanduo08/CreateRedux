@@ -2,11 +2,13 @@ import {call, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import {counter} from './api';
 
 function * start(action){
-    yield call(counter, action.minutes)
+    const m = yield call(counter, action.seconds)
+    console.log(m);
+    yield put({type: 'END', payload:{text: 'timer ended'}})
 }
 
 function* mySaga(){
-    yield takeLatest('START_TIMER', start);
+    yield takeLatest('START', start);
 }
 
 export default mySaga;

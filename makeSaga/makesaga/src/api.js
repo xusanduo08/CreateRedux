@@ -1,7 +1,7 @@
 export function counter(m){
     return new Promise((resolve, reject) => {
         setTimeout(()=> {
-            resolve();
+            resolve(m);
         }, m)
     })
 }
