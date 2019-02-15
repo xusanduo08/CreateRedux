@@ -5,6 +5,7 @@ const isIterator = fn => fn && isFunc(fn.next);
 // entrance
 function* root(){
     yield takeEvery('INCREMENT_ASYNC1', incrementAsync); // takeEvery最终返回的是一个对象
+    // {type:'fork', context: null, args: ['INCREMENT_ASYNC1', incrementAsync]}
 }
 
 function incrementAsync(){
@@ -16,8 +17,8 @@ proc(root());
 
 function channel(){
     const subscribers = [];
-    function take(sub, matcher){
-        sub[MATCH] = matcher; // 这个matcher是一个匹配函数，如果匹配，函数返回true
+    function take(sub, matcher){ // sub是对应作用域下的next
+        sub[MATCH] = matcher; // 这个matcher是一个匹配函数，如果匹配，函数返回true:(input) => input == pattern
         subscribers.push(sub); // 存储
     }
     function put(item){
@@ -49,6 +50,8 @@ function proc(iterator, args){
             console.log('done')
         }
     }
+
+    // obj = {type:'fork', context: null, args:['INCREMENT_ASYNC1', incrementAsync], fn: takeEveryHelper}
     function runEffect(obj, cb){ // 这地方的obj是一个task, cb是next，next方法就是上面定义的
         if(obj.type == 'fork'){
             runForkEffect(obj, cb);
@@ -57,7 +60,7 @@ function proc(iterator, args){
         }
     }
 
-    function runForkEffect({context/**null*/, fn/*takeEveryHelper*/, args/*[type, fn]*/}, cb/**next */){
+    function runForkEffect({context/**null*/, fn/*takeEveryHelper*/, args/*['INCREMENT_ASYNC1', incrementAsync]*/}, cb/**next */){
         function createTaskIterator({context, fn, args}){
             if(isIterator(fn)){
                 return fn;
@@ -79,14 +82,14 @@ function proc(iterator, args){
 }
 
 function takeEvery(type, fn){
-    function takeEveryHepler(pattern, worker){ //入参是type, fn
+    function takeEveryHepler(pattern, worker){ //入参是pattern='INCREMENT_ASYNC1',worker=incrementAsync
         function fsmIterator(fsm, q0){
             const done = {done: true, value: undefined};
             const qEnd = {};
             let qNext=q0;
             function next(arg, error){
-                let [q, output] = fsm[qNext]()
-                qNext = q;
+                let [q, output] = fsm[qNext](); // output={done: false, value: {type:'take', pattern}}
+                qNext = q; // qNext=q1
                 return qNext === qEnd ? done : output;
             }
             return {next}

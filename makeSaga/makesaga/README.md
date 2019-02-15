@@ -12,3 +12,4 @@ effect是一个javascript对象，里面包含描述副作用的信息，可以�
 
 __yield表达式本身没有返回值__
 
+proc会执行rootSaga，把需要监听的action和对应的回调注册到channel中
