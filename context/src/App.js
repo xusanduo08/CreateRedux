@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+
 import './App.css';
-import {createStore} from 'redux'
-import {Provider, connect} from './redux';
+import { createStore } from 'redux'
+import { Provider } from './provider';
+import connect from './connect';
 import reducer from './reducer';
 
 
 const store = createStore(reducer);
 
-class List extends Component{
-  constructor(props){
-    super(props);
+class List extends Component {
+
+  add(){
+    this.props.dispatch({type: 'ADD'})
   }
-  render(){
-    return <div>{this.props.text}</div>
+
+  render() {
+    return <div>
+      {this.props.text}<br />
+      <button onClick={this.add.bind(this)}>ADD</button>
+    </div>
   }
 }
 
@@ -23,7 +29,7 @@ class App extends Component {
     return (
       <div className="App">
         <Provider store={store}>
-          {connect((state) => ({text: state.text}))(List)}
+          {connect((state) => ({ text: state.text }))(List)}
         </Provider>
       </div>
     );

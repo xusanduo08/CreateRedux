@@ -17,17 +17,27 @@
  * **/
 
 import React from 'react';
+import Context from './context';
 
-const Context = React.createContext(null);
 
 class Provider extends React.Component {
   constructor(props) {
     super(props);
+    const {store} = this.props;
+    const listeners = [];
+    this.state = {
+      store, 
+      listeners
+    }
+    store.subscribe(() => {   // 订阅store
+      listeners.forEach(fn => {
+        fn();
+      })
+    })
   }
 
   render() {
-    const defaultVlaue = { state: this.props.store.getState(), dispatch: this.props.store.dispatch }
-
+    const defaultVlaue = this.state;
     return (
       <Context.Provider value={{...defaultVlaue}}>
         {this.props.children}
@@ -36,16 +46,5 @@ class Provider extends React.Component {
   }
 }
 
-function connect(mapStateToProps){
 
-  return (component) => {
-    return <Context.Consumer>
-      {({state, dispatch}) => {
-        console.log(state, dispatch);
-        return React.createElement(component, {...mapStateToProps(state), dispatch});
-      }}
-    </Context.Consumer>
-  }
-}
-
-export {Provider, connect};
+export {Provider};

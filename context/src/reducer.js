@@ -1,8 +1,8 @@
 export default function reducer(state, action) {
   switch (action.type) {
     case 'ADD':
-      return {text: action.text}
+      return {text: state.text++}
     default:
-      return {text:'default'}
+      return {text:1}
   }
 }
