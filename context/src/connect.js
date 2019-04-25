@@ -9,14 +9,14 @@ function connect(mapStateToProps) {
     function ConnectFunction(){
       const { store, listeners } = useContext(Context);
       console.log(store.getState())
-      listeners.push(this.setState({}));
+      //listeners.push(this.setState({}));
       return <Context.Consumer>
         {() => {
           return React.createElement(component, { ...mapStateToProps(store.getState()), dispatch: store.dispatch });
         }}
       </Context.Consumer>
     }
-    return <ConnectFunction />;
+    return ConnectFunction;
   }
 }
 
