@@ -16,4 +16,6 @@ class List extends Component {
   }
 }
 
-export default connect(state => ({text: state.text}))(List);
+export default connect(state => {
+  return {text: state.text}
+})(List);
