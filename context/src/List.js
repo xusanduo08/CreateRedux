@@ -8,10 +8,15 @@ class List extends Component {
     this.props.dispatch({ type: 'ADD' })
   }
 
+  del(){
+    this.props.dispatch({ type: 'DEL' })
+  }
+
   render() {
     return <div>
       {this.props.text}<br />
       <button onClick={this.add.bind(this)}>ADD</button>
+      <button onClick={this.del.bind(this)}>DEL</button>
     </div>
   }
 }
