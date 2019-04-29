@@ -6,7 +6,6 @@ function connect(mapStateToProps) {
   return (Component) => {
     function reducer(state, action ){
       const {updateCount} = state;
-      console.log(updateCount)
       return {updateCount: updateCount+1}
     }
 
@@ -22,8 +21,8 @@ function connect(mapStateToProps) {
 
       function handleSubsequentCall(state){
         let newProps = mapStateToProps(state);
-        console.log(shallowEqual(lastProps, newProps))
-        if(!shallowEqual(lastProps, newProps)){ // TODO shallowEqual
+  
+        if(!shallowEqual(lastProps, newProps)){ // TODO shallowEqual，比较props是否有变化，有的话返回新的props
           lastProps = newProps;
           return {dispatch, ...newProps}
         }
@@ -49,7 +48,7 @@ function connect(mapStateToProps) {
       useEffect(()=>{
         const selector = selectorFactory(store.dispatch, mapStateToProps);
         const newRenderProps = selector(store.getState());
-        console.log(newRenderProps, renderProps.current)
+        
         if(!shallowEqual(newRenderProps, renderProps.current)){
           renderProps.current = newRenderProps
           dispatch({
@@ -58,7 +57,7 @@ function connect(mapStateToProps) {
           })
         }
         listeners.push(() => {
-         
+          const newRenderProps = selector(store.getState());
           if(!shallowEqual(newRenderProps, renderProps.current)){ // TODO shallowEqual
             renderProps.current = newRenderProps
             dispatch({
