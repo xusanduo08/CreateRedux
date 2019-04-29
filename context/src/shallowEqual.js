@@ -23,14 +23,22 @@ function shallowEqual(objA, objB){
       return false
     }
   })
-  for(let i = 0; i < keysA.length; i++){
-    if(!objB.hasOwnProperty(keysA[i])){
-      return false;
-    } else if(!is(objA[keysA[i]], objB[keysA[i]])){
-      return false
+  // for(let i = 0; i < keysA.length; i++){
+  //   if(!objB.hasOwnProperty(keysA[i])){
+  //     return false;
+  //   } else if(!is(objA[keysA[i]], objB[keysA[i]])){
+  //     return false
+  //   }
+  // }
+  let result = true;
+  result = !keysA.some(key => {
+    if(!objB.hasOwnProperty(key)){
+      return true;
+    } else if(!is(objA[key], objB[key])){
+      return true;
     }
-  }
-  return true;
+  })
+  return result;
 }
 
 export default shallowEqual;
