@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import connect from './connect';
 
 
-class List extends Component {
+class Counter extends Component {
 
   add() {
     this.props.dispatch({ type: 'ADD' })
   }
 
   del(){
-    this.props.dispatch({ type: 'DEL' })
+    this.props.dispatch({ type: 'RENAME' })
   }
 
   render() {
@@ -23,4 +23,4 @@ class List extends Component {
 
 export default connect(state => {
   return {text: state.text}
-})(List);
+})(Counter);

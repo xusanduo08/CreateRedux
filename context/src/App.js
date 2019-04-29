@@ -4,7 +4,8 @@ import './App.css';
 import { createStore } from 'redux'
 import { Provider } from './provider';
 import reducer from './reducer';
-import List from './List';
+import Counter from './Counter';
+import Name from './Name';
 
 
 const store = createStore(reducer);
@@ -15,7 +16,8 @@ class App extends Component {
     return (
       <div className="App">
         <Provider store={store}>
-          <List />
+          <Counter />
+          <Name />
         </Provider>
       </div>
     );
