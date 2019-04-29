@@ -5,7 +5,7 @@ export default function reducer(state, action) {
     case 'DEL':
       return {...state, text: --state.text}
     case 'RENAME':
-      return {...state, name: 'yyy'}
+      return {...state, name: action.payload}
     default:
       return {text:1, name:'xxx'}
   }

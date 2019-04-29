@@ -9,7 +9,7 @@ class Counter extends Component {
   }
 
   del(){
-    this.props.dispatch({ type: 'RENAME' })
+    this.props.dispatch({ type: 'DEL' })
   }
 
   render() {
