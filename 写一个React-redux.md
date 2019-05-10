@@ -71,17 +71,35 @@ class Provider extends React.Component{
 
 我们只实现一个简单版的，只考虑mapStateToProps。
 
-```
+```jsx
+import {useContext, useReducer} from 'react';
 import Context from './Context.js';
 
 function connect(mapStateToProps){
 
+  function selector(mapStateToProps, store){ // 计算属性
+    return  {...mapStateToProps(store.getState()), dispatch: store.dispatch};
+  }
+  function reducer(state, action){
+    return {updateCount: state.updateCount++};
+  }
+  
 	return (WrapperComponent)=>{
 		function ConnectComponent(){
-		
+			const {store} = useContext(Context);
+      const [, dispatch] = useReducer(reducer, {updateCount: 0});
+      
+      useEffect(()=>{
+        store.subscribe(()=> {
+          dispatch({type: 'update'})
+        })
+      }, [])
+      const props = selector(mapStateToProps, store);
+			return <WrapperComponent {...props} />
 		}
 		return ConnectComponent;
 	}
 }
 ```
 
+以上就实现了一个非常非常简单的react-redux。
