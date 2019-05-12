@@ -87,13 +87,15 @@ function connect(mapStateToProps){
 	return (WrapperComponent)=>{
 		function ConnectComponent(){
 			const {store} = useContext(Context);
+      // 使用useReducer替代useState
       const [, dispatch] = useReducer(reducer, {updateCount: 0});
       
       useEffect(()=>{
-        store.subscribe(()=> {
-          dispatch({type: 'update'})
+        store.subscribe(() => {
+          dispatch({type:'update'});
         })
       }, [])
+      
       const props = selector(mapStateToProps, store);
 			return <WrapperComponent {...props} />
 		}
@@ -103,3 +105,52 @@ function connect(mapStateToProps){
 ```
 
 以上就实现了一个非常非常简单的react-redux。
+
+简单的就说明有很多问题没有考虑到，比如性能问题。
+
+如果props没变，最好是不让页面re-render，但现在我们的代码没有这样的功能，我们来实现一下。
+
+```jsx
+useEffect(()=>{
+  store.subscribe(()=> {
+  		if(/*props发生了改变*/){
+  			dispatch({type: 'update'})
+  		}
+   })
+}, [])
+```
+
+我们使用浅比较来对props进行比较（深比较消耗较高，而且props层级不好确定）。
+
+shallowEqual.js
+
+```js
+// Object.is()方法的pollyfill,对基本数据类型能进行准确比较
+function is(x, y){
+	if(x === y){
+		return x !== 0 || y !== 0;
+	} else {
+		return x !== x || y !== y;
+	}
+}
+
+function shallowEqual(objA, objB){
+	if(is(objA, objB)){
+		return true;
+	}
+	if(typeof objA !== 'object' || typeof objB !== 'object' 
+		|| objA === null || objB === null){
+		return false;
+	}
+  
+  let keysA = Object.keys(objA);
+  for(let i = 0; i < keysA.length; i++){
+    if(!objB.hasOwnProperty(key)){
+      return false;
+    } else if(!is(objA[keys[i]], objB[keys[i]])){
+      return false
+    }
+  }
+}
+```
+
