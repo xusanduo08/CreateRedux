@@ -72,7 +72,7 @@ class Provider extends React.Component{
 我们只实现一个简单版的，只考虑mapStateToProps。
 
 ```jsx
-import {useContext, useReducer} from 'react';
+import React, {useContext, useReducer, useEffect} from 'react';
 import Context from './Context.js';
 
 function connect(mapStateToProps){
@@ -89,6 +89,7 @@ function connect(mapStateToProps){
 			const {store} = useContext(Context);
       // 使用useReducer替代useState
       const [, dispatch] = useReducer(reducer, {updateCount: 0});
+      const props = selector(mapStateToProps, store);
       
       useEffect(()=>{
         store.subscribe(() => {
@@ -96,7 +97,7 @@ function connect(mapStateToProps){
         })
       }, [])
       
-      const props = selector(mapStateToProps, store);
+      
 			return <WrapperComponent {...props} />
 		}
 		return ConnectComponent;
@@ -152,5 +153,40 @@ function shallowEqual(objA, objB){
     }
   }
 }
+```
+
+在connect方法中使用shallowEqual比较props是否发生变化：
+
+修改ConnectComponent方法
+
+```jsx
+function ConnectComponent(){
+	const {store} = useContext(Context);
+  // 使用useReducer替代useState
+  const [, dispatch] = useReducer(reducer, {updateCount: 0});
+  const props = selector(mapStateToProps, store);
+      
+  const renderProps = useRef(null); // 用来保存props
+  
+
+  useEffect(()=> {
+  	const props = selector(mapStateToProps, store);
+  	if(!shallowEqual(renderProps.current, props)){
+      renderProps.current = props;
+      dispatch({type: 'update'})
+    }
+    store.subscribe(() => {
+    	const props = selector(mapStateToProps, store);
+      if(!shallowEqual(renderProps.current, props)){
+        renderProps.current = props;
+        dispatch({type: 'update'})
+      }
+    })
+  }, [])
+      
+      
+  return <WrapperComponent {...renderProps.current} />
+}
+
 ```
 
