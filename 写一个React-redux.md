@@ -81,7 +81,7 @@ function connect(mapStateToProps){
     return  {...mapStateToProps(store.getState()), dispatch: store.dispatch};
   }
   function reducer(state, action){
-    return {updateCount: state.updateCount++};
+    return {updateCount: ++state.updateCount};
   }
   
 	return (WrapperComponent)=>{
@@ -188,5 +188,64 @@ function ConnectComponent(){
   return <WrapperComponent {...renderProps.current} />
 }
 
+```
+
+再来更改下`selector`方法，确保state不变时，返回的props的引用也不变。
+
+```jsx
+function ConnectComponent(){
+	const {store} = useContext(Context);
+  // 使用useReducer替代useState
+  const [, dispatch] = useReducer(reducer, {updateCount: 0});
+  
+  function selectorFactory(mapStateToProps){
+    let lastProps = null;
+    let firstCall = true;
+    
+    function handleFirstCall(state){
+      firstCall = false;
+      return {...mapStateToProps(state), dispatch: store.dispatch}
+    }
+    
+    function handleSubsequentCall(state){
+      const newProps = mapStateToProps(state);
+      if(!shallowEqual(lastProps, newProps)){
+        lastProps = newProps;
+        return {...newProps, dispatch: store.dispatch}
+      }
+      return {...lastProps, dispatch: store,dispatch}
+    }
+    function finalCall(state){
+      if(firstCall){
+        return handleFirstCall(state)
+      } else {
+        return handleSubsequentCall(state);
+      }
+    }
+    return (state) => finalCall(state);
+  }
+  const renderProps = useRef(null); // 用来保存props
+  
+
+  useEffect(()=> {
+  	const selector = selectorFactory(mapStateToProps);
+    const props = selector(store.getState())
+  	if(!shallowEqual(renderProps.current, props)){
+      renderProps.current = props;
+      dispatch({type: 'update'})
+    }
+    store.subscribe(() => {
+    	const selector = selectorFactory(mapStateToProps);
+	    const props = selector(store.getState())
+      if(!shallowEqual(renderProps.current, props)){
+        renderProps.current = props;
+        dispatch({type: 'update'})
+      }
+    })
+  }, [])
+      
+      
+  return <WrapperComponent {...renderProps.current} />
+}
 ```
 
