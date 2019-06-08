@@ -17,12 +17,6 @@ function shallowEqual(objA, objB){
     }
 
   let keysA = Object.keys(objA);
-  keysA.forEach(key => {
-    
-    if(!is(objA[key], objB[key])){
-      return false
-    }
-  })
   // for(let i = 0; i < keysA.length; i++){
   //   if(!objB.hasOwnProperty(keysA[i])){
   //     return false;
@@ -30,7 +24,7 @@ function shallowEqual(objA, objB){
   //     return false
   //   }
   // }
-  let result = true;
+  let result = false;
   result = !keysA.some(key => {
     if(!objB.hasOwnProperty(key)){
       return true;
