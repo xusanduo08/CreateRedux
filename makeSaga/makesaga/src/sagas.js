@@ -11,4 +11,12 @@ function* mySaga(){
     yield takeLatest('START', start);
 }
 
-export default mySaga;
+function pSagaTest(){
+    console.log(1111);
+}
+
+function * pSaga(){
+    yield {actionType:'pSaga', fn: pSagaTest}
+}
+
+export default pSaga;

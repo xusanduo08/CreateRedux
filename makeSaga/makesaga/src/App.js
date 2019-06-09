@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import {connect} from 'react-redux';
 import './App.css';
-import sagaEvent from './saga-event';
 
 class App extends Component {
   constructor(){
@@ -10,10 +9,12 @@ class App extends Component {
     this.doAsyncWork = this.doAsyncWork.bind(this);
   }
   doAsyncWork(){
-    this.props.dispatch({type:'START', seconds: 2000})
+    // this.props.dispatch({type:'START', seconds: 2000});/
+    this.props.dispatch({
+      type:'pSaga'
+    })
   }
   componentDidMount(){
-    sagaEvent('btn')
   }
   render() {
     return (

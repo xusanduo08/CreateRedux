@@ -1,91 +1,36 @@
-function next(arg, isErr){
-    let result;
-    if(isErr){
-        result = iterator.throw(arg);
-    } else {
-        result = iterator.next(arg);
+// 一个redux中间件
+
+import channel from './channel';
+import proc from './proc';
+
+function sagaMiddlewareFactory (){
+
+  const takers = [];  //放置action和cb
+  const stdChannel = channel(takers);
+
+  function sagaMiddleware(){
+    // 要能把action和对应的操作注册到某个地方保存起来
+    // 等发起action时要去这个地方找，看有没有对应的操作，有的话则执行该操作，没有就不做操作。
+    // 1.存储action和对应的cb
+    // 2.能处理generator，可以自动执行
+    // 3.能监听
+    
+    return next => action => {
+      next(action);
+      stdChannel.put(action.type);
     }
-    const {done, value} = result;
+    
+  }
 
-    if(done){
-        return;
-    }
-
-    if(value[0] === 'promise'){
-        const promise = value[1];
-        promise.then(resolvedValue => next(resolvedValue), error  => next(error, true));
-    } else if(value[0] === 'delay'){
-        const timeout = value[1];
-        setTimeout(() => next(`${timeout}ms elapsed`), timeout);
-    } else if(value[0] === 'ping'){
-        next('pong')
-    } else {
-        iterator.throw(new Error('无法识别的effect'));
-    }
-}
-
-const TASK_CANCEL =   Symbol('TASK_CANCEL');
-const CANCEL = Symbol('CANCEL');
-
-function proc(iterator, parentContext, cont){
-    // 先构造task为如下结构 
-    const task = {
-        cancel: () => next(TASK_CANCEL)
-    }
-
-    cont.cancel = task.cancel;
-    next();
+  sagaMiddleware.run = (saga) => {
+    let iterator = saga();
+    const task = proc(iterator,stdChannel);
+    
     return task;
+  }
 
-    function next(arg, isErr){
-        try{
-            let result;
-            if(isErr){
-                result = iterator.throw(arg);
-            } else if(arg === TASK_CANCEL) {
-                next.cancel();
-                result = iterator.return(TASK_CANCEL)
-            } else {
-                result = iterator.next(arg);
-            }
-
-            if(!result.done){
-                digestEffect(result.value, next)
-            } else {
-                cont(result.value);// 迭代器执行完毕，调用cont将结果返回上层
-            }
-        } catch(error){
-            cont(error, true)
-        }
-    }
-
-    function digestEffect(rawEffect, cb){
-        ///...
-        runEffect();
-        ///...
-
-    }
-
-    function runEffect(effect, currCb){
-        const effectType = effect[0];
-        if(effectType === 'promise'){
-            resolvePromise(effect, ctx, currCb);
-        } else if(effectType === 'iterator'){
-            resolveIterator(iterator, ctx, currCb)
-        } else {
-            throw new Error('Unknown effect type');
-        }
-    }
-
-    function resolvePromise([effectType, promise], ctx, cb){
-        const cancelPromise = promise[CANCEL];
-        if(is.func(cancelPromise)){
-            cb.cancel = cancelPromise;
-        }
-        promise.then(cb, error => cb(error, true));
-    }
-
-    function resolveIterator([effectType, iterator], ctx, cb){
-        proc(iterator, ctx, cb)
-    }
+  return sagaMiddleware;
 }
+
+
+export default sagaMiddlewareFactory;
