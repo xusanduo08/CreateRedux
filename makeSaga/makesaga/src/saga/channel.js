@@ -32,7 +32,7 @@ const channel = (takers = []) => {  // 存储action和对应的操作
             if(!done){
               if(is.promise(value)){
                 resolvePromise(value, arg => result.next(arg)); // TODO：如果此时result还没结束，该怎么继续执行下去
-                // TODO 需要把执行iterator的逻辑分离出来，这个iterator要有自执行功能
+                // TODO 需要把执行iterator的逻辑分离出来，这个iterator要有自执行功能----增加一个runIterator
               }
             }
           } else {
