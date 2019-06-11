@@ -8,7 +8,7 @@ const channel = (takers = []) => {  // 存储action和对应的操作
     put: (action) => {  // 发起一个action
       for (let i = 0; i < takers.length; i++) {
         let take = takers[i];
-        if (take.action == action) {
+        if (take.action === action) {
           let result = take.cb();
 
           if (is.iterator(result)){

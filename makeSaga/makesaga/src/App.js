@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import {connect} from 'react-redux';
 import './App.css';
 
@@ -7,13 +6,13 @@ class App extends Component {
   
   doAsyncWork(){
     this.props.dispatch({
-      type:'pSaga'
+      type:'sagaTest1'
     })
   }
   
   doWork2(){
     this.props.dispatch({
-      type:'getInfo2'
+      type:'sagaTest2'
     })
   }
 

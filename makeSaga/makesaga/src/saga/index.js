@@ -1,4 +1,5 @@
 // 一个redux中间件
+// saga分两种，一种是worker saga，一种是watcher saga
 
 import channel from './channel';
 import proc from './proc';
