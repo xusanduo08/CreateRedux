@@ -19,8 +19,16 @@ async function getInfo(){
     return result;
 }
 
+async function getInfo2(arg){
+  let result = await new Promise(resolve => setTimeout(() => {
+    resolve(arg);
+  }, 3000));
+  return result;
+}
+
 function* pSagaTest() {
-  const result = yield getInfo();
+  const info = yield getInfo();
+  const result = yield getInfo2(info);
   console.log(result);
 }
 
