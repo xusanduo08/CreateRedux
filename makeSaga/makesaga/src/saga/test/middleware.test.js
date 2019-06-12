@@ -21,7 +21,7 @@ test('middleware.run', () => {
     try{
         middleware.run(saga);
     } catch(e){
-        expect(e instanceof Error).tobe(true);
+        expect(e instanceof Error).toBe(true);
     }
     // createStore(()=>{}, applyMiddleware(middleware));
     // const task = middleware.run(saga);
