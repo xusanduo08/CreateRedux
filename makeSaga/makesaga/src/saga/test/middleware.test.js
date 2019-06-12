@@ -1,4 +1,5 @@
 import sagaMiddleware from '../index';
+// import { createStore, applyMiddleware } from 'redux'
 
 test('middleware output', () => {
     const middleware = sagaMiddleware();
@@ -12,4 +13,16 @@ test('middleware output', () => {
     const actionHandler = nextHandler();
     expect(typeof actionHandler).toBe('function');
     expect(actionHandler.length).toBe(1);
+})
+
+test('middleware.run', () => {
+    const middleware = sagaMiddleware();
+    function*saga(){}
+    try{
+        middleware.run(saga);
+    } catch(e){
+        expect(e instanceof Error).tobe(true);
+    }
+    // createStore(()=>{}, applyMiddleware(middleware));
+    // const task = middleware.run(saga);
 })

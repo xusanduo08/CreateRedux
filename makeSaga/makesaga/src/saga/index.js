@@ -8,6 +8,7 @@ function sagaMiddlewareFactory (){
 
   const takers = [];  //放置action和cb
   const stdChannel = channel(takers);
+  let runSaga;
 
   function sagaMiddleware(){
     // 要能把action和对应的操作注册到某个地方保存起来
@@ -16,6 +17,12 @@ function sagaMiddlewareFactory (){
     // 2.能处理generator，可以自动执行
     // 3.能监听
     
+    runSaga = (saga) => {
+      let iterator = saga();
+      const task = proc(iterator, stdChannel);
+      return task;
+    }
+
     return next => action => {
       next(action);
       stdChannel.put(action.type);
@@ -24,10 +31,10 @@ function sagaMiddlewareFactory (){
   }
 
   sagaMiddleware.run = (saga) => {
-    let iterator = saga();
-    const task = proc(iterator,stdChannel);
-    
-    return task;
+    if(!runSaga){
+      throw new Error('Before running a Saga, you must mount the Saga middleware on the Store using applyMiddleware');
+    }
+    return runSaga(saga);
   }
 
   return sagaMiddleware;
