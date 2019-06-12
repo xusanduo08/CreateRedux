@@ -1,20 +1,27 @@
 
 // 专门处理iterator
 function proc(iterator, channel) {
-  while(true){
-    let {done, value} = iterator.next();
-    if(!done){
-      // TODO
-      // 如果generator没有结束的话，那么需要做两件事
-      // 1.处理当前value中包含的操作
-      // 2.继续向下执行generator
-      channel.take(value.pattern, value.worker);
-    } else {
-      break;
+  next();
+  
+  function next(arg){
+      let {value, done} = iterator.next(arg);
+      if(!done){
+        runEffect(value, next);
+      }else {
+        return value;
+      }
+  }
+
+  function runEffect(effect, cb){
+    if(effect.type === 'TAKE'){
+      runTakeEffect(effect, cb, channel);
     }
   }
-  
-  
+
+  function runTakeEffect(effect, cb, channel){
+    channel.take(effect.pattern, cb, 'TAKE');
+  }
+
 }
 
 export default proc;

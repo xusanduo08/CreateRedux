@@ -1,6 +1,3 @@
-import is from '../utils/is';
-import runIterator from './runIterator';
-
 
 const channel = (takers = []) => {  // 存储action和对应的操作
 
@@ -8,22 +5,18 @@ const channel = (takers = []) => {  // 存储action和对应的操作
     put: (action) => {  // 发起一个action
       for (let i = 0; i < takers.length; i++) {
         let take = takers[i];
-        if (take.action === action) {
-          let result = take.cb();
-
-          if (is.iterator(result)){
-            
-            runIterator(result);
-          } else {
-            return result;
-          }
+        if (action.type === take.action && take.type === 'TAKE') {
+          
+          take.cb(action);
+          takers.splice(i, 1); // take类型操作执行一次之后要删除掉
         }
       }
     },
-    take: (action, cb) => { // 装入一个action和对应的cb
+    take: (action, cb, type) => { // 装入一个action和对应的cb
       takers.push({
         action,
-        cb
+        cb,
+        type
       })
     }
   }

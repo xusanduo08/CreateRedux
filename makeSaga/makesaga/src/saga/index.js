@@ -25,7 +25,7 @@ function sagaMiddlewareFactory (){
 
     return next => action => {
       next(action);
-      stdChannel.put(action.type);
+      stdChannel.put(action);
     }
     
   }
