@@ -1,14 +1,15 @@
 
+import {TAKE} from './effectType';
+
 const channel = (takers = []) => {  // 存储action和对应的操作
 
   return {
     put: (action) => {  // 发起一个action
       for (let i = 0; i < takers.length; i++) {
         let take = takers[i];
-        if (action.type === take.action && take.type === 'TAKE') {
-          
+        if (action.type === take.action && take.type === TAKE) {
+          let [take] = takers.splice(i, 1); // take类型操作执行一次之后要删除掉
           take.cb(action);
-          takers.splice(i, 1); // take类型操作执行一次之后要删除掉
         }
       }
     },
