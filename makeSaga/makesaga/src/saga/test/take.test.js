@@ -15,16 +15,19 @@ test('test take', () => {
     actual.push(yield take('saga test3'));
   }
 
-  sagaMiddleware.run(fn);
+  let promise = sagaMiddleware.run(fn);
 
   let expected = [
     {type:'saga test1'},
     {type:'saga test2'},
     {type:'saga test3'}
   ]
+  let dispatchP = Promise.resolve(1)
+    .then(() => store.dispatch({type:'saga test1'}))
+    .then(() => store.dispatch({type:'saga test2'}))
+    .then(() => store.dispatch({type:'saga test3'}))
+    .then(() => store.dispatch({type:'saga test4'}))
+
+  return Promise.all([promise, dispatchP]).then(()=>expect(actual).toEqual(expected));
   
-  store.dispatch({type:'saga test1'});
-  store.dispatch({type:'saga test2'});
-  store.dispatch({type:'sage test3'});
-  expect(actual).toEqual(expected);
 })
