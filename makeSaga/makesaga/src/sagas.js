@@ -3,6 +3,7 @@ import { take } from './saga/effects.js';
 
 function* pSaga() {  // watcher saga
   let result = [];
+  result.push(yield take());
   result.push(yield take('sagaTest1'));
   
   
