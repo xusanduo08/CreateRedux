@@ -19,8 +19,8 @@ function sagaMiddlewareFactory (){
     
     runSaga = (saga) => {
       let iterator = saga();
-      const task = proc(iterator, stdChannel);
-      return task;
+      let promise = proc(iterator, stdChannel);
+      return promise;
     }
 
     return next => action => {
