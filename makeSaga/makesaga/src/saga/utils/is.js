@@ -7,6 +7,12 @@ const is = {
   },
   promise: p => {
     return p && is.func(p.then);
+  },
+  channel: ch => {
+    return is.func(ch.take) && is.func(ch.put);
+  },
+  pattern: pat => {
+    return typeof pat === 'string'
   }
 }
 

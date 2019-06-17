@@ -24,6 +24,13 @@ class App extends Component {
       payload:'sagaTest3'
     })
   }
+  
+  doWork4(){
+    this.props.dispatch({
+      type: 'sage test channel',
+      payload: 'sage test channel'
+    })
+  }
 
   render() {
     return (
@@ -31,6 +38,7 @@ class App extends Component {
         <button onClick={this.doAsyncWork.bind(this)} id='btn'>DoAsyncWork</button>
         <button onClick={this.doWork2.bind(this)} id='btn'>doWork2</button>
         <button onClick={this.doWork3.bind(this)} id='btn'>doWork3</button>
+        <button onClick={this.doWork4.bind(this)} id='btn'>doWork4</button>
         <p>{this.props.text}</p>
       </div>
     );
