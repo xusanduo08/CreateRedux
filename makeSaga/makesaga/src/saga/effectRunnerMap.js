@@ -1,5 +1,5 @@
-import {actionChannel} from './channel';
-import {TAKE, ACTION_CHANNEL} from './effectType';
+import { actionChannel } from './channel';
+import { TAKE, ACTION_CHANNEL } from './effectType';
 
 
 function runTakeEffect(env, { channel = env.channel, pattern }, cb) {
@@ -21,7 +21,13 @@ function runChannelEffect(env, { pattern }, cb) {
   cb(channel);
 }
 
+function runPutEffect(env, { action }, cb) {
+  env.dispatch(action);
+  cb();
+}
+
 export default {
   TAKE: runTakeEffect,
-  ACTION_CHANNEL: runChannelEffect
+  ACTION_CHANNEL: runChannelEffect,
+  PUT: runPutEffect
 }

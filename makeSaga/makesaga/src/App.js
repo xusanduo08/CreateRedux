@@ -27,8 +27,8 @@ class App extends Component {
   
   doWork4(){
     this.props.dispatch({
-      type: 'sage test channel',
-      payload: 'sage test channel'
+      type: 'saga test channel',
+      payload: 'saga test channel'
     })
   }
 

@@ -1,4 +1,3 @@
-import {TAKE, ACTION_CHANNEL} from './effectType';
 import effectRunnerMap from './effectRunnerMap';
 
 // 专门处理iterator
