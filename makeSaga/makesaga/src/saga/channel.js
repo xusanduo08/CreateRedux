@@ -1,6 +1,4 @@
 
-import {TAKE, ACTION_CHANNEL} from './effectType';
-
 const channel = (takers = []) => {  // 存储action和对应的操作
 
   return {

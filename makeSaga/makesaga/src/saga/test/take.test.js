@@ -1,4 +1,5 @@
 import {take} from '../effects';
+import {actionChannel} from '../effects';
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from '../index';
 
@@ -40,5 +41,37 @@ test('test take', () => {
     .then(() => expect(actual).toEqual(expected))
 
   return Promise.all([promise, dispatchP]);
+})
+
+test('test take from provided channel ', () => {
+  let sagaMiddleware = createSagaMiddleware();
+  let store = createStore(()=>{}, applyMiddleware(sagaMiddleware));
+
+  let actual =[];
+  function* fn(){
+    const chan = yield actionChannel('action channel');
+    actual.push(yield take('start watch chan'));
+    actual.push(yield take(chan));
+    actual.push(yield take(chan));
+    actual.push(yield take(chan));
+    actual.push(yield take(chan));
+  }
+
+  let promise = sagaMiddleware.run(fn);
+  let expected = [
+    {type:'start watch chan'},
+    {type:'action channel'},
+    {type:'action channel'},
+    {type:'action channel'},
+    {type:'action channel'}
+  ];
+  let dispatchP = Promise.resolve(1)
+    .then(() => store.dispatch({type:'action channel'})) // 被阻塞
+    .then(() => store.dispatch({type:'start watch chan'}))
+    .then(() => store.dispatch({type:'action channel'}))
+    .then(() => store.dispatch({type:'action channel'}))
+    .then(() => store.dispatch({type:'action channel'}))
+    .then(() => expect(actual).toEqual(expected))
   
+  return Promise.all([promise, dispatchP]);
 })
