@@ -13,7 +13,7 @@ const channel = (takers = []) => {  // 存储action和对应的操作
         }
       }
     },
-    take: (pattern='*', cb, type) => { // 装入一个action和对应的cb
+    take: (cb, pattern='*', type) => { // 装入一个action和对应的cb
       takers.push({
         pattern,
         cb,
@@ -23,6 +23,8 @@ const channel = (takers = []) => {  // 存储action和对应的操作
   }
 }
 
+// actionChannel 提供缓存功能，发起一个action之后，如果actionChannel中没有指定的taker处理，则缓存action
+// 下次出现taker时直接执行
 export const actionChannel = ()=>{
   let takers = [];
   let buffers = []; // 缓存消息
@@ -34,14 +36,12 @@ export const actionChannel = ()=>{
       let take = takers.shift();
       take.cb(action);
     },
-    take: (pattern='*', cb, type) => { // 装入一个action和对应的cb
+    take: (cb) => { // 装入一个action和对应的cb
       if(buffers.length !== 0){ // 如果缓存中有数据，则直接消耗一次buffer
         return cb(buffers.shift());
       }
       takers.push({
-        pattern,
-        cb,
-        type
+        cb
       })
     }
   }

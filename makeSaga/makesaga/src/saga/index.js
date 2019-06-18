@@ -19,7 +19,10 @@ function sagaMiddlewareFactory (){
     
     runSaga = (saga) => {
       let iterator = saga();
-      let promise = proc(iterator, stdChannel);
+      const env = {
+        channel: stdChannel
+      }
+      let promise = proc(iterator, env);
       return promise;
     }
 
@@ -29,7 +32,7 @@ function sagaMiddlewareFactory (){
     }
     
   }
-
+  
   sagaMiddleware.run = (saga) => {
     if(!runSaga){
       throw new Error('Before running a Saga, you must mount the Saga middleware on the Store using applyMiddleware');
