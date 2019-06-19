@@ -16,7 +16,6 @@ function proc(iterator, env) {
       runEffect(value, next);
     }else {
       def.resolve(1);
-      console.log(22)
       return value;
     }
   }

@@ -6,7 +6,7 @@ function* pSaga() {  // watcher saga
   let chan = yield actionChannel('saga test channel');
 
   while(true){
-    result.push(yield take('sagaTest1'));
+    result.push(yield take(['sagaTest1', 'sagaTest2']));
     yield put({type:'PUT_ACTION', payload:'PUT_ACTION'})
     result.push(yield take(chan));
     console.log(result);

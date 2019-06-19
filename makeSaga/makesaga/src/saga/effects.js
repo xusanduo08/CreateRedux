@@ -1,5 +1,13 @@
 import { TAKE, ACTION_CHANNEL, PUT } from './effectType';
-import is from './utils/is';
+import * as is from './utils/is';
+
+/**
+ * effect结构如下
+ * {
+ *    payload:{},  // effect携带的数据
+ *    type: xxx, // effect类型
+ * } 
+ */
 
 export function take(patternOrChannel = '*') { // pattern: action, worker: 工作函数
   // TODO  重写take

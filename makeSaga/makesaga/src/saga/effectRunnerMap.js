@@ -1,9 +1,18 @@
 import { actionChannel } from './channel';
 import { TAKE, ACTION_CHANNEL } from './effectType';
+import * as is from './utils/is';
 
+function matcher(pattern='*'){
+  const createMatcher = (pattern === '*' ? ()=> ()=>'*' : 
+    is.func(pattern) ? pattern => input => pattern(input) : 
+    is.array(pattern) ? pattern => input => pattern.indexOf(input) >= 0 :
+    is.string(pattern) ?  pattern => (input)=>input === pattern : null);
+
+  return createMatcher(pattern);
+}
 
 function runTakeEffect(env, { channel = env.channel, pattern }, cb) {
-  channel.take(cb, pattern, TAKE);
+  channel.take(cb, matcher(pattern), TAKE);
 }
 
 // 发送了一个action后，如果channel中没有接收的taker，则将这次消息缓存
@@ -14,10 +23,11 @@ function runChannelEffect(env, { pattern }, cb) {
   const channel = actionChannel();
 
   const taker = (action) => {
-    env.channel.take(taker, pattern, ACTION_CHANNEL);
+    env.channel.take(taker, matcher(pattern), ACTION_CHANNEL);
     channel.put(action);
   };
-  env.channel.take(taker, pattern, ACTION_CHANNEL); // stdChannel负责根据action触发对应的操作
+
+  env.channel.take(taker,matcher(pattern), ACTION_CHANNEL); // stdChannel负责根据action触发对应的操作
   cb(channel);
 }
 

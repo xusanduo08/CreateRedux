@@ -1,19 +1,8 @@
-const is = {
-  func: (fn) => {
-    return typeof fn == 'function';
-  },
-  iterator: (fn) => {
-    return is.func(fn.next);
-  },
-  promise: p => {
-    return p && is.func(p.then);
-  },
-  channel: ch => {
-    return is.func(ch.take) && is.func(ch.put);
-  },
-  pattern: pat => {
-    return typeof pat === 'string'
-  }
-}
 
-export default is;
+export const func = fn => typeof fn == 'function';
+export const iterator = fn => func(fn.next);
+export const promise = p => p && func(p.then);
+export const channel = ch => func(ch.take) && func(ch.put)
+export const array = Array.isArray;
+export const string = s => typeof s === 'string';
+export const pattern = pat => typeof pat === 'string' || func(pat) || (array(pat) && pat.every(pattern))

@@ -13,8 +13,8 @@ test('test take', () => {
   function* fn(){
     try{
       actual.push(yield take()); // take all acitons
-      actual.push(yield take('saga test1'));
-      actual.push(yield take('saga test2'));
+      actual.push(yield take(['saga test1', 'saga test*']));
+      actual.push(yield take(input => input == 'saga test2'));
       actual.push(yield take('saga test3'));
       actual.push(yield take('saga test4')); // 如果某一个action一直没有触发的话，会自动END么
     } finally{
