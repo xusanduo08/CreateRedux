@@ -1,7 +1,7 @@
 import {take} from '../effects';
 import {actionChannel} from '../effects';
 import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from '../index';
+import createSagaMiddleware from '../sagaMiddleware';
 
 
 test('test take', () => {

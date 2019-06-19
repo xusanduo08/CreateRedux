@@ -3,11 +3,12 @@ import effectRunnerMap from './effectRunnerMap';
 // 专门处理iterator
 function proc(iterator, env) {
   let def={};
-  next();
-  return new Promise((resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     def.resolve = resolve;
     def.reject = reject;
   }).catch(e => console.log(e))
+  next();
+  return promise;
   
   function next(arg){
     let {value, done} = iterator.next(arg);
@@ -15,6 +16,7 @@ function proc(iterator, env) {
       runEffect(value, next);
     }else {
       def.resolve(1);
+      console.log(22)
       return value;
     }
   }

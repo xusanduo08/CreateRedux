@@ -1,12 +1,12 @@
-import sagaMiddleware from '../index';
+import sagaMiddleware from '../sagaMiddleware';
 // import { createStore, applyMiddleware } from 'redux'
 
 test('middleware output', () => {
     const middleware = sagaMiddleware();
     expect(typeof middleware).toBe('function');
-    expect(middleware.length).toBe(0);
+    expect(middleware.length).toBe(1);
 
-    const nextHandler = middleware();
+    const nextHandler = middleware({});
     expect(typeof nextHandler).toBe('function');
     expect(nextHandler.length).toBe(1);
 
