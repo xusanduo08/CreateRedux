@@ -1,17 +1,6 @@
 import { actionChannel } from './channel';
 import { TAKE, ACTION_CHANNEL } from './effectType';
-import * as is from './utils/is';
-
-//TODO 抽离matcher
-// TODO 整理参数，标准化参数，文档
-function matcher(pattern='*'){
-  const createMatcher = (pattern === '*' ? ()=> ()=> true : 
-    is.func(pattern) ? pattern => input => pattern(input) : 
-    is.array(pattern) ? pattern => input => pattern.indexOf(input) >= 0 :
-    is.string(pattern) ?  pattern => (input)=>input === pattern : null);
-
-  return createMatcher(pattern);
-}
+import matcher from './matcher';
 
 function runTakeEffect(env, { channel = env.channel, pattern }, cb) {
   channel.take(cb, matcher(pattern), TAKE);
