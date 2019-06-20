@@ -21,8 +21,7 @@ const channel = (takers = []) => {  // 存储action和对应的操作
         }
       }
       
-      takers = currTakers.filter((item, index) => !desTakes.indexOf[index] >=0);
-      console.log(desTakes, takers.length)
+      takers = takers.filter((item, index) => !(desTakes.indexOf(index) >=0));
     },
     take: (cb, pattern='*', type) => { // 装入一个action和对应的cb
       takers.push({
