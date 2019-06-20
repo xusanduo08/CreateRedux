@@ -1,15 +1,28 @@
+import {isEND, END} from './utils/isEND';
 
 const channel = (takers = []) => {  // 存储action和对应的操作
-
   return {
     put: (action) => {  // 发起一个action
-      for (let i = 0; i < takers.length; i++) {
-        let take = takers[i];
+      // console.log(isEND(action), action.type)
+      if(isEND(action)){ // 如果发起的是一个END的话，则终止所有saga
+        takers.forEach(take => {
+          take.cb(END);
+        })
+        takers = [];
+        return;
+      }
+      let currTakers = takers.concat([]);
+      let desTakes = []
+      for (let i = 0; i < currTakers.length; i++) {
+        let take = currTakers[i];
         if (take.pattern(action.type)) {
-          let [take] = takers.splice(i, 1); // take类型操作执行一次之后要删除掉
+          desTakes.push(i)
           take.cb(action);
         }
       }
+      
+      takers = currTakers.filter((item, index) => !desTakes.indexOf[index] >=0);
+      console.log(desTakes, takers.length)
     },
     take: (cb, pattern='*', type) => { // 装入一个action和对应的cb
       takers.push({
@@ -28,6 +41,14 @@ export const actionChannel = ()=>{
   let buffers = []; // 缓存消息
   return {
     put: (action) => {  // 发起一个action
+      // console.log(action)
+      if(isEND(action)){ // 如果发起的是一个END的话，则终止所有saga
+        takers.forEach(take => {
+          take.cb(END);
+        })
+        takers = [];
+        return;
+      }
       if(takers.length == 0){ // 如果没有指定的take匹配的话，则缓存
         return buffers.push(action);
       }

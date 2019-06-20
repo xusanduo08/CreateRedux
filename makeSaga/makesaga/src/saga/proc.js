@@ -1,4 +1,6 @@
 import effectRunnerMap from './effectRunnerMap';
+import {isEND} from './utils/isEND'
+
 
 // 专门处理iterator
 function proc(iterator, env) {
@@ -11,12 +13,18 @@ function proc(iterator, env) {
   return promise;
   
   function next(arg){
-    let {value, done} = iterator.next(arg);
-    if(!done){
-      runEffect(value, next);
+    let result;
+    if(isEND(arg)){
+      result = {done: true}
+    } else {
+      result = iterator.next(arg);
+    }
+    
+    if(!result.done){
+      runEffect(result.value, next);
     }else {
       def.resolve(1);
-      return value;
+      return result.value;
     }
   }
   

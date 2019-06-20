@@ -2,6 +2,7 @@ import {take} from '../effects';
 import {actionChannel} from '../effects';
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from '../sagaMiddleware';
+import {END} from '../utils/isEND';
 
 
 test('test take', () => {
@@ -17,6 +18,7 @@ test('test take', () => {
       actual.push(yield take(input => input == 'saga test2'));
       actual.push(yield take('saga test3'));
       actual.push(yield take('saga test4')); // 如果某一个action一直没有触发的话，会自动END么
+      actual.push(yield take('saga test5'))
     } finally{
       actual.push({type:'auto ended'});
     }
@@ -30,7 +32,6 @@ test('test take', () => {
     {type:'saga test2'},
     {type:'saga test3'},
     {type:'saga test4'},
-    {type:'auto ended'}
   ]
   let dispatchP = Promise.resolve(1)
     .then(() => store.dispatch({type:'action-*'}))
@@ -38,6 +39,7 @@ test('test take', () => {
     .then(() => store.dispatch({type:'saga test2'}))
     .then(() => store.dispatch({type:'saga test3'}))
     .then(() => store.dispatch({type:'saga test4'}))
+    .then(() => store.dispatch(END))
     .then(() => expect(actual).toEqual(expected))
 
   return Promise.all([promise, dispatchP]);
@@ -62,7 +64,6 @@ test('test take from provided channel ', () => {
     {type:'start watch chan'},
     {type:'action channel'},
     {type:'action channel'},
-    {type:'action channel'},
     {type:'action channel'}
   ];
   let dispatchP = Promise.resolve(1)
@@ -70,6 +71,7 @@ test('test take from provided channel ', () => {
     .then(() => store.dispatch({type:'start watch chan'}))
     .then(() => store.dispatch({type:'action channel'}))
     .then(() => store.dispatch({type:'action channel'}))
+    .then(() => store.dispatch(END))
     .then(() => store.dispatch({type:'action channel'}))
     .then(() => expect(actual).toEqual(expected))
   

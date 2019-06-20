@@ -7,6 +7,17 @@ saga是一个redux中间件
 1.首先要满足中间件的标准
 
 effect是一个javascript对象，里面包含描述副作用的信息，可以通过yield传达给sagaMiddleware执行。
+effect结构如下：
+```
+{
+  payload:{
+    channel, // 通道effect会有此参数
+    pattern // 字符串，数组，或者函数
+  },
+  type, // effect类型，比如TAKE，PUT等
+  cb, // 回调，当页面发起的action.type满足pattern时会触发
+}
+```
 
 在redux-saga世界里，所有的effect都必须被yield才会被执行
 

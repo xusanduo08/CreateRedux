@@ -5,10 +5,7 @@ import './App.css';
 class App extends Component {
   
   doAsyncWork(){
-    this.props.dispatch({
-      type:'sagaTest1',
-      payload:'sagaTest1'
-    })
+    this.props.dispatch({type:'CHANNEL_END_TYPE'})
   }
   
   doWork2(){

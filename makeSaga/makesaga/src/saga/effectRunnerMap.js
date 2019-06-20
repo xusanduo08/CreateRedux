@@ -1,6 +1,7 @@
 import { actionChannel } from './channel';
 import { TAKE, ACTION_CHANNEL } from './effectType';
 import matcher from './matcher';
+import {isEND} from './utils/isEND';
 
 function runTakeEffect(env, { channel = env.channel, pattern }, cb) {
   channel.take(cb, matcher(pattern), TAKE);
@@ -14,7 +15,10 @@ function runChannelEffect(env, { pattern }, cb) {
   const channel = actionChannel();
 
   const taker = (action) => {
-    env.channel.take(taker, matcher(pattern), ACTION_CHANNEL);
+    if(!isEND(action)){
+      env.channel.take(taker, matcher(pattern), ACTION_CHANNEL); // 需要一直监听对应的action
+    }
+    
     channel.put(action);
   };
 
