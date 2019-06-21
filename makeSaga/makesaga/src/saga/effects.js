@@ -22,7 +22,7 @@ export function take(patternOrChannel = '*') { // pattern: action, worker: å·¥ä½
 
 }
 
-export function actionChannel(pattern) {
+export function actionChannel(pattern = '*') {
   return { payload: { pattern }, type: ACTION_CHANNEL };
 }
 

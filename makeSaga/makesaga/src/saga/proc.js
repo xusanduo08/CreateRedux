@@ -3,7 +3,7 @@ import {isEND} from './utils/isEND'
 
 
 // 专门处理iterator
-function proc(iterator, env) {
+function proc(env, iterator) {
   let def={};
   let promise = new Promise((resolve, reject) => {
     def.resolve = resolve;
