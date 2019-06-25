@@ -26,9 +26,19 @@ export function actionChannel(pattern = '*') {
   return { payload: { pattern }, type: ACTION_CHANNEL };
 }
 
-export function put(action) { // 向store发起一个action，非阻塞, put({type:xxx, payload})
+
+// 向store发起一个action，非阻塞, put({type:xxx, payload})
+// 或者向指定的channel存入一个action
+export function put(channel, action) {
+  if(is.undef(action)){
+    action = channel;
+    channel = undefined;
+  }
   return {
-    payload:{ action },
+    payload:{
+      channel,
+      action
+    },
     type: PUT
   }
 }
