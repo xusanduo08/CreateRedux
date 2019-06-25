@@ -34,9 +34,10 @@ const stdChannel = (takers = []) => {  // 主channel，存储action和对应的�
 
 // channel 提供缓存功能，收到一个action之后，如果channel中没有指定的taker处理，则缓存该action
 // 下次出现taker时直接执行
-export const channel = ()=>{
+export const channel = (buffers)=>{
   let takers = [];
-  let buffers = []; // 缓存消息
+  
+  buffers = buffers || [];
   return {
     put: (action) => {  // 发起一个action
       if(isEND(action)){ // 如果发起的是一个END的话，则终止所有saga
