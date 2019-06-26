@@ -1,6 +1,9 @@
 import React from 'react';
 import './App.css';
-import connect from './connect'
+import connect from './connect';
+import Name from './Name';
+import Age from './Age';
+
 
 function App(props) {
 
@@ -26,9 +29,8 @@ function App(props) {
 
   return (
     <div className="App">
-      <p>name: <span>{props.name}</span></p>
-      <p>age: <span>{props.age}</span></p>
-      <p>render-count: <span>{props.renderCount}</span></p>
+      <Name />
+      <Age />
       <div>
         <button onClick={changeName}>change name</button>
         <button onClick={changeAge}>change age</button>
