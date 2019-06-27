@@ -2,8 +2,9 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import Context from './context';
 import shallowEqual from './shallowEqual';
 
+const noop = () => {};
 function connect(mapStateToProps){
-
+  mapStateToProps = mapStateToProps || noop;
   return (Component) => {
 
     function ConnectComponent(){

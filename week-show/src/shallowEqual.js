@@ -1,8 +1,8 @@
 
 function is(x, y){
-  if(x === y){ // 例外： +0 === -0
+  if(x === y){ // 例外： +0 === -0 -> true
     return x !== 0 || y !== 0 || 1/x !== 1/y;
-  } else { // 例外： NaN !== NaN
+  } else { // 例外： NaN !== NaN -> true
     return x !== x || y !== y;
   }
 }
