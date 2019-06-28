@@ -18,8 +18,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 * store以props形式传给Provider组件
 * 页面根组件会放在Provider组件内部渲染
-* 最终导出的组件是被connect方法处理后的组件，处理后的组件可以获取store中存储的数据
-* 可以通过mapStateToProps将store中数据处理或者说筛选过后再传给组件
+* 最终导出的组件是被connect方法处理后的组件，处理后的组件可以获取store中存储的数据state
+* 可以通过mapStateToProps将state处理或者说筛选过后再传给组件
 
 
 
@@ -59,7 +59,7 @@ class Provider extends React.Component{
 
 Provider就这些，下面来写connect方法。
 
-connect方法要将组件订阅到store上，也就是说，store更新时，组件能够自动re-render。另外，connect方法还得能根据传入的mapStateToProps将store中的数据处理后传给组件。
+connect方法要将组件订阅到store上，这样state更新时，组件能够自动re-render。另外，connect方法还得能根据传入的mapStateToProps将state中的数据处理后传给组件。
 
 ```jsx
 // connect.js

@@ -81,7 +81,7 @@ export default connect((state) => ({...state}))(App);
 
 ```
 
-上面的代码中，Name和Age两个组件分别渲染name和age属性，各自从store订阅name和age数据。当我在页面上点击change name按钮改变store中name值时，会发现Age组件也进行了re-render；同样的，当我在页面上点击change age按钮改变store中age值时，Name组件也进行了re-render。这两种情况中，数据没有改变的那个组件完全没必要去re-render，我们需要对其进行优化。
+上面的代码中，Name和Age两个组件分别渲染name和age属性，各自从state订阅name和age数据。当我在页面上点击change name按钮改变state中name值时，会发现Age组件也进行了re-render；同样的，当我在页面上点击change age按钮改变state中age值时，Name组件也进行了re-render。这两种情况中，数据没有改变的那个组件完全没必要去re-render，我们需要对其进行优化。
 
 来分析一下connect方法中订阅store的操作：
 
@@ -93,7 +93,7 @@ function connect(mapStateToProps){
       let {store} = useContext(Context);
       let [count, setCount] = useState(0);
       useEffect(() => {
-        // 这地方，当store中有数据更新时，会全量执行订阅到store上的方法
+        // 这地方，当state中有数据更新时，会全量执行订阅到store上的方法
         // 也就是说，不管我们组件用到的那个数据有没有发生变化，组件都会re-render一次，这显然很浪费性能
         // 那我们是不是可以先比较一下当前组件需要的属性是否有变化再决定是否更新组件？
         // 可以。那么问题又来了，mapStateToProps计算出来的是个对象，对象里面的属性值还可以是对象
@@ -183,7 +183,7 @@ function connect(mapStateToProps){
           setCount(prevState => prevState + 1);
         }
         store.subscribe(() => {
-          let newProps = mapStateToProps(store.getState()); // 后续每当store有更新时都会执行比较，根据比较结果选择是否更新组件
+          let newProps = mapStateToProps(store.getState()); // 后续每当state有更新时都会执行比较，根据比较结果选择是否更新组件
           if(!shallowEqual(renderProps.current, newProps)){
             renderProps.current = newProps;
             setCount(prevState => prevState + 1);
