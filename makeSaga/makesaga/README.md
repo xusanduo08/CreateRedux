@@ -24,3 +24,11 @@ effect结构如下：
 __yield表达式本身没有返回值__
 
 proc会执行rootSaga，把需要监听的action和对应的回调注册到channel中
+
+take(pattern)
+take(channel)
+put(action)
+put(channel, action)
+call(fn, ...args) // 支持普通函数调用
+
+

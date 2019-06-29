@@ -31,8 +31,14 @@ function runPutEffect(env, { channel, action }, cb) {
   cb();
 }
 
+function runCallEffect(env, {fn, args}, cb){
+  const result = fn.apply(null, args);
+  cb(result);
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
-  PUT: runPutEffect
+  PUT: runPutEffect,
+  CALL: runCallEffect
 }

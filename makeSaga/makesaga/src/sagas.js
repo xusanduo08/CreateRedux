@@ -1,24 +1,21 @@
 
-import { take, actionChannel, put } from './saga/effects.js';
+import { take, actionChannel, put, call } from './saga/effects.js';
+
+function cal(a, b) {
+  return a * b;
+}
 
 function* pSaga() {  // watcher saga
   let result = [];
   let chan = yield actionChannel('saga test channel');
-  result.push(yield take('sagaTest2'));
-    result.push(yield take(chan));
-    result.push(yield take(chan));
-    console.log(result);
-    
-    yield put({type:'PUT_ACTION', payload:'PUT_ACTION'})
-    
-    
-    
-    result.push(yield take('sagaTest2'));
-    
-    result.push(yield take('sagaTest3'));
-    console.log(result);
-  
-  
+
+  result.push(yield take(chan));
+  console.log(result);
+
+  result.push(yield call(cal, 3, 2))
+  console.log(result);
+
+
 }
 
 export default pSaga;

@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -40,5 +40,15 @@ export function put(channel, action) {
       action
     },
     type: PUT
+  }
+}
+
+export function call(fn, ...args){
+  return {
+    payload:{
+      fn,
+      args
+    },
+    type: CALL
   }
 }
