@@ -10,8 +10,8 @@ function cal(a, b) {
 }
 
 function* it(){
-  yield take('sagaTest2');
-  
+  let result = yield take('sagaTest2');
+  return result;
 }
 
 function* pSaga() {  // watcher saga
