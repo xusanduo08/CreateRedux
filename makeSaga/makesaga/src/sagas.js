@@ -5,6 +5,10 @@ function cal(a, b) {
   return a * b;
 }
 
+function* it(){
+  yield take('sagaTest2');
+}
+
 function* pSaga() {  // watcher saga
   let result = [];
   let chan = yield actionChannel('saga test channel');
@@ -12,10 +16,9 @@ function* pSaga() {  // watcher saga
   result.push(yield take(chan));
   console.log(result);
 
-  result.put(yield call(cal, 3, 2))
+  result.push(yield call(it));
+  result.push(yield it());
   console.log(result);
-
-
 }
 
 export default pSaga;

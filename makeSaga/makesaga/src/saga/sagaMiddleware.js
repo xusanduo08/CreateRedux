@@ -3,7 +3,7 @@
 
 import channel from './channel';
 import proc from './proc';
-
+const noop = ()=>{};
 function sagaMiddlewareFactory (){
 
   const takers = [];  //放置action和cb
@@ -23,7 +23,7 @@ function sagaMiddlewareFactory (){
         channel: stdChannel,
         dispatch
       }
-      let promise = proc(env, iterator);
+      let promise = proc(env, iterator, /** isRoot */true, noop);
       return promise;
     }
 

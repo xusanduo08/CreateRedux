@@ -2,6 +2,8 @@ import { channel } from './channel';
 import { TAKE, ACTION_CHANNEL } from './effectType';
 import matcher from './matcher';
 import { isEND } from './utils/isEND';
+import * as is from './utils/is';
+import proc from './proc';
 
 // effectRunnerMap统一catch错误，出现错误后调用cb(err, true)，交给下一次next执行
 
@@ -48,6 +50,9 @@ function runPutEffect(env, { channel, action }, cb) {
 function runCallEffect(env, { fn, args }, cb) {
   try {
     const result = fn.apply(null, args);
+    if(is.iterator(result)){
+      return proc(env, result, false, cb);
+    }
     cb(result);
   } catch (e) {
     cb(e, true)
