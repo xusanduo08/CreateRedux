@@ -12,7 +12,7 @@ function* pSaga() {  // watcher saga
   result.push(yield take(chan));
   console.log(result);
 
-  result.push(yield call(cal, 3, 2))
+  result.put(yield call(cal, 3, 2))
   console.log(result);
 
 

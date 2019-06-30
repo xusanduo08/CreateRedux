@@ -12,19 +12,25 @@ function proc(env, iterator) {
   next();
   return promise;
   
-  function next(arg){
-    let result;
-    if(isEND(arg)){
-      result = {done: true}
-    } else {
-      result = iterator.next(arg);
-    }
-    
-    if(!result.done){
-      runEffect(result.value, next);
-    }else {
-      def.resolve(1);
-      return result.value;
+  function next(arg, isErr){
+    try{
+      let result;
+      if(isErr){
+        iterator.throw(arg);
+      }else if(isEND(arg)){
+        result = {done: true}
+      } else {
+        result = iterator.next(arg);
+      }
+      
+      if(!result.done){
+        runEffect(result.value, next);
+      }else {
+        def.resolve(1);
+        return result.value;
+      }
+    } catch(e){
+      console.error(e)
     }
   }
   
