@@ -29,6 +29,13 @@ take(pattern)
 take(channel)
 put(action)
 put(channel, action)
-call(fn, ...args) // 支持普通函数调用
+call(fn, ...args) 仅支持普通函数调用 2019.6.29
+TODO: error处理
+DONE: 增加了错误处理 2019.6.30
+
+TODO：call可以调用一个generator方法 2019.6.30
+DONE：call可以调用generator以及promise 2019.6.30
+
+TODO：call([context, fn], ...args)
 
 
