@@ -41,6 +41,10 @@ function proc(env, iterator, isRoot, mainCb) { // mianCb 为当前Generator执�
   function runEffect(effect, cb){
     if(is.iterator(effect)){
       proc(env, effect, false, cb);
+    } else if(is.promise(effect)){
+      effect.then(cb, error => {
+        cb(error, true);
+      })
     } else {
       let effectRunner = effectRunnerMap[effect.type];
       effectRunner(env, effect.payload, cb);

@@ -23,6 +23,7 @@ function* pSaga() {  // watcher saga
 
   result.push(yield call(cal));
   result.push(yield it());
+  result.push(yield cal());
   console.log(result);
 }
 
