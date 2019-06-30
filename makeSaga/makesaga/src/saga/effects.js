@@ -43,9 +43,22 @@ export function put(channel, action) {
   }
 }
 
-export function call(fn, ...args){
+export function call(fnDescription, ...args){
+  let context = null;
+  let fn;
+  if(is.func(fnDescription)){
+    fn = fnDescription;
+  } else if(is.array(fnDescription)){ // call([context, fn], ...args)  或者 call([context, 'fnName'], ...args)
+    [context, fn] = fnDescription;
+  }
+
+  if(context && is.string(fn) && is.func(context[fn])){
+    fn = context[fn];
+  }
+
   return {
     payload:{
+      context,
       fn,
       args
     },

@@ -16,11 +16,13 @@ function* it(){
 
 function* pSaga() {  // watcher saga
   let result = [];
-  let chan = yield actionChannel('saga test channel');
-
-  result.push(yield take(chan));
-  console.log(result);
-
+  const obj = {
+    printAge: function(){
+      return (this.age)
+    },
+    age: 23
+  }
+  result.push(yield call([obj, obj.printAge]));
   result.push(yield call(cal));
   result.push(yield it());
   result.push(yield cal());

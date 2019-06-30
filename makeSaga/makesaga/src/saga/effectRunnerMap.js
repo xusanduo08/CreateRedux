@@ -47,9 +47,9 @@ function runPutEffect(env, { channel, action }, cb) {
   }
 }
 
-function runCallEffect(env, { fn, args }, cb) {
+function runCallEffect(env, {context, fn, args }, cb) {
   try {
-    const result = fn.apply(null, args);
+    const result = fn.apply(context, args);
     if(is.iterator(result)){
       return proc(env, result, false, cb);
     } else if(is.promise(result)){
