@@ -2,11 +2,16 @@
 import { take, actionChannel, put, call } from './saga/effects.js';
 
 function cal(a, b) {
-  return a * b;
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      resolve(222);
+    }, 1000)
+  });
 }
 
 function* it(){
   yield take('sagaTest2');
+  
 }
 
 function* pSaga() {  // watcher saga
@@ -16,7 +21,7 @@ function* pSaga() {  // watcher saga
   result.push(yield take(chan));
   console.log(result);
 
-  result.push(yield call(it));
+  result.push(yield call(cal));
   result.push(yield it());
   console.log(result);
 }

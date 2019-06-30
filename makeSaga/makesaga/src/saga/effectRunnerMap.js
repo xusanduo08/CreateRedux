@@ -52,6 +52,11 @@ function runCallEffect(env, { fn, args }, cb) {
     const result = fn.apply(null, args);
     if(is.iterator(result)){
       return proc(env, result, false, cb);
+    } else if(is.promise(result)){
+      result.then(cb, error => {
+        cb(error, true);
+      })
+      return
     }
     cb(result);
   } catch (e) {
