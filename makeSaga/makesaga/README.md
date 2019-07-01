@@ -43,4 +43,6 @@ TODO：fork
 一个generator下可以有好多个子generator，也就是分支（fork），需要有这么一个体系去记录下应用中的这些generator之间的关系
 主generator，子generator，子下面还可以有孙generator，通过generator之间的父子关系，将整个应用的generator关联起来（像个二叉树）
 
-
+使用task表示一个generator的运行
+每个task都有一个queue队列，用来放置fork产生的子task，也就是说当前的task产生了一个分叉
+fork产生的每个proc都会产生一个task，而每个task都会有一个父task，子task会处于父task的queue中
