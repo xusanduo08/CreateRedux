@@ -37,5 +37,10 @@ TODO：call可以调用一个generator方法 2019.6.30
 DONE：call可以调用generator以及promise 2019.6.30
 
 TODO：call([context, fn], ...args)
+DONE：支持 call([context, fn/fnName]) 2019.6.30
+
+TODO：fork
+一个generator下可以有好多个子generator，也就是分支（fork），需要有这么一个体系去记录下应用中的这些generator之间的关系
+主generator，子generator，子下面还可以有孙generator，通过generator之间的父子关系，将整个应用的generator关联起来（像个二叉树）
 
 

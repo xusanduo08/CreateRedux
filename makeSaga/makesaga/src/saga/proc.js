@@ -1,17 +1,22 @@
 import effectRunnerMap from './effectRunnerMap';
 import {isEND} from './utils/isEND';
-import * as is from './utils/is'
+import * as is from './utils/is';
+import Task from './task';
 
 const noop = ()=>{};
 
 // 专门处理iterator
-function proc(env, iterator, isRoot, mainCb) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
+function proc(env, context, iterator, isRoot, mainCb) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
   let def={};
   mainCb = mainCb || noop;
   let promise = new Promise((resolve, reject) => {
     def.resolve = resolve;
     def.reject = reject;
   }).catch(e => console.log(e))
+
+  // TODO
+  //let task = new Task(env, mainTask, context, promise.resolve, promise.reject);
+
   next();
   return promise;
   
