@@ -23,7 +23,7 @@ function sagaMiddlewareFactory (){
         channel: stdChannel,
         dispatch
       }
-      let promise = proc(env, {}, iterator, /** isRoot */true, noop);
+      let promise = proc(env, {}, {}, iterator, /** isRoot */true, noop);
       return promise;
     }
 

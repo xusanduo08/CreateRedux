@@ -6,7 +6,7 @@ import Task from './task';
 const noop = ()=>{};
 
 // 专门处理iterator
-function proc(env, context, iterator, isRoot, mainCb) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
+function proc(env, mainTask={}, context, iterator, isRoot, mainCb) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
   let def={};
   mainCb = mainCb || noop;
   let promise = new Promise((resolve, reject) => {
@@ -15,7 +15,7 @@ function proc(env, context, iterator, isRoot, mainCb) { // mianCb 为当前Gener
   }).catch(e => console.log(e))
 
   // TODO
-  //let task = new Task(env, mainTask, context, promise.resolve, promise.reject);
+  let task = new Task(env, mainTask, context, def.resolve, def.reject); // proc返回一个task，表示当前的generator任务
 
   next();
   return promise;
@@ -34,7 +34,7 @@ function proc(env, context, iterator, isRoot, mainCb) { // mianCb 为当前Gener
       if(!result.done){
         runEffect(result.value, next);
       }else {
-        def.resolve(1);
+        task.resolve(1);
         mainCb(result.value);
         return result.value;
       }
@@ -45,7 +45,7 @@ function proc(env, context, iterator, isRoot, mainCb) { // mianCb 为当前Gener
   
   function runEffect(effect, cb){
     if(is.iterator(effect)){
-      proc(env, effect, false, cb);
+      proc(env, {}, {}, effect, false, cb);
     } else if(is.promise(effect)){
       effect.then(cb, error => {
         cb(error, true);
