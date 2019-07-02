@@ -6,8 +6,8 @@ import * as is from './utils/is';
 import proc from './proc';
 
 // effectRunnerMap统一catch错误，出现错误后调用cb(err, true)，交给下一次next执行
-
-function runTakeEffect(env, { channel = env.channel, pattern }, cb) {
+const noop = ()=>{};
+function runTakeEffect(env, { channel = env.channel, pattern }, cb, {parentTask}) {
   try{
     channel.take(cb, matcher(pattern), TAKE);
   } catch(e){
@@ -38,6 +38,7 @@ function runChannelEffect(env, { pattern }, cb) {
 
 }
 
+// 发起一个action或者向指定的channel存入一个pattern
 function runPutEffect(env, { channel, action }, cb) {
   try {
     channel ? channel.put(action) : env.dispatch(action);
@@ -47,11 +48,12 @@ function runPutEffect(env, { channel, action }, cb) {
   }
 }
 
+// 调用一个方法，可以是普通方法，也可以是返回promise的方法，或者是generator
 function runCallEffect(env, {context, fn, args }, cb) {
   try {
     const result = fn.apply(context, args);
     if(is.iterator(result)){
-      return proc(env, {}, {}, result, false, cb);
+      return proc(env, {}, result, false, cb);
     } else if(is.promise(result)){
       result.then(cb, error => {
         cb(error, true);
@@ -64,9 +66,37 @@ function runCallEffect(env, {context, fn, args }, cb) {
   }
 }
 
+// 从主任务中分出一个分支任务
+function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
+  try{
+    const result = fn.apply(context, args);
+    let iterator = null;
+    console.log(result)
+    if(!is.iterator(result)){
+      iterator = {
+        next:()=>{
+          return {value:result, done: true}
+        }
+      }
+    }
+    const child = proc(env, parentTask.context, iterator, false, noop)
+    if(child.isRunning()){
+      parentTask.queue.addTask(child);
+      cb(child)
+    } else if(child.isAborted()){ // 如果分支任务出错的话，取消主任务下的所有分支任务
+      // TODO 取消其他分支任务
+    } else {
+      cb(child);
+    }
+  } catch(e){
+    cb(e, true)
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
   PUT: runPutEffect,
-  CALL: runCallEffect
+  CALL: runCallEffect,
+  FORK: runForkEffect
 }

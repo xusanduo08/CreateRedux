@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -63,5 +63,28 @@ export function call(fnDescription, ...args){
       args
     },
     type: CALL
+  }
+}
+
+export function fork(fnDescription, ...args){
+  let context = null;
+  let fn;
+  if(is.func(fnDescription)){
+    fn = fnDescription;
+  } else if(is.array(fnDescription)){ // call([context, fn], ...args)  或者 call([context, 'fnName'], ...args)
+    [context, fn] = fnDescription;
+  }
+
+  if(context && is.string(fn) && is.func(context[fn])){
+    fn = context[fn];
+  }
+
+  return {
+    payload:{
+      context,
+      fn,
+      args
+    },
+    type: FORK
   }
 }
