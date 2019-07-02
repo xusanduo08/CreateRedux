@@ -1,9 +1,30 @@
-function Task(env, mainTask, context, resolve, reject){
-  this.env = env;
-  this.mainTask = mainTask;
-  this.context = context;
-  this.resolve = resolve;
-  this.reject = reject;
+import { RUNNING, DONE, ABORTED } from "./taskStatus";
+
+function newTask(env, parentContext, def){
+  let status = RUNNING;
+
+  return {
+    env,
+    isRunning: () => status === RUNNING,
+    isAborted: () => status === ABORTED,
+    context: parentContext,
+    end: (result, isErr)=>{
+      if(!isErr){
+        def.resolve(result);
+      }
+    },
+    queue: queue(),
+    toPromise: ()=> def.promise
+  }
 }
 
-export default Task;
+function queue(){
+  const queue = [];
+  return {
+    addTask: function(task){
+      queue.push(task)
+    }
+  }
+}
+
+export default newTask;
