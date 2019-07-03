@@ -9,7 +9,7 @@ test('should not interpret returned effect. fork(()=>effectCreator())', () => { 
 
   function* genFn(){
     const task = yield fork(()=> call(fn));
-    return task;
+    return task.toPromise();
   }
 
   return middleware.run(genFn).toPromise().then(actual => expect(actual).toEqual(call(fn)));
