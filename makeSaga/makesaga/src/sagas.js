@@ -1,5 +1,5 @@
 
-import { take, actionChannel, put, call } from './saga/effects.js';
+import { take, actionChannel, put, call, fork } from './saga/effects.js';
 
 function cal(a, b) {
   return new Promise(resolve=>{
@@ -29,4 +29,11 @@ function* pSaga() {  // watcher saga
   console.log(result);
 }
 
-export default pSaga;
+function* forkSaga(){
+  const fn = ()=>null;
+  const task = yield fork(()=>call(fn));
+  console.log(task.toPromise())
+  return task.toPromise()
+}
+
+export {pSaga, forkSaga}
