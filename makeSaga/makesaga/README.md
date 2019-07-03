@@ -47,5 +47,8 @@ TODO：fork
 每个task都有一个queue队列，用来放置fork产生的子task，也就是说当前的task产生了一个分叉
 fork产生的每个proc都会产生一个task，而每个task都会有一个父task，子task会处于父task的queue中
 总结下吧：
+* 每次proc都会产生一个mainTask和一个task
+* task是本次mainTask和其分支task的集合
 * fork产生的task会挂载在parent-task上，parent-task有个queue，专门用来放置其下fork的task
 * fork产生的task是可以取消的
+* 一个task在终止之前，会等待所有分叉任务终止
