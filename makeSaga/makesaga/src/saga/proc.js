@@ -1,12 +1,12 @@
 import effectRunnerMap from './effectRunnerMap';
 import {isEND} from './utils/isEND';
 import * as is from './utils/is';
-import Task from './task';
+import newTask from './task';
 
 const noop = ()=>{};
 
 // 专门处理iterator
-function proc(env, parentContext, iterator, isRoot, mainCb) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
+function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb 为当前Generator执行完毕后父级Generator需要继续执行的方法
   let def={};
   mainCb = mainCb || noop;
   let promise = new Promise((resolve, reject) => {
@@ -16,8 +16,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb) { // mianCb 为当�
   def.promise = promise;
 
   // TODO
-  let task = new Task(env, parentContext, def); // proc返回一个task，表示当前的generator任务
-
+  let task = newTask(env, parentContext, def, name); // proc返回一个task，表示当前的generator任务
   const executingContext = {
     parentTask: task
   }

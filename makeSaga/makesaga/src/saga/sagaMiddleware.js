@@ -23,7 +23,7 @@ function sagaMiddlewareFactory (){
         channel: stdChannel,
         dispatch
       }
-      let task = proc(env, {}, iterator, /** isRoot */true, noop);
+      let task = proc(env, {}, iterator, /** isRoot */true, noop, saga.name);
       return task;
     }
 

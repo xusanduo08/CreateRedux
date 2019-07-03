@@ -81,7 +81,6 @@ function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
   try{
     const result = fn.apply(context, args);
     let iterator = null;
-    console.log(result)
     if(!is.iterator(result)){
       iterator = {
         next:()=>{
@@ -89,7 +88,7 @@ function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
         }
       }
     }
-    const child = proc(env, parentTask.context, iterator, false, noop)
+    const child = proc(env, parentTask.context, iterator, false, noop, 'child')
     if(child.isRunning()){
       parentTask.queue.addTask(child);
       cb(child)

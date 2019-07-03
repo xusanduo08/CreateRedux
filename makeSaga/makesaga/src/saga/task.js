@@ -1,10 +1,11 @@
 import { RUNNING, DONE, ABORTED } from "./taskStatus";
 
-function newTask(env, parentContext, def){
+function newTask(env, parentContext, def, name){
   let status = RUNNING;
 
   return {
     env,
+    name,
     isRunning: () => status === RUNNING,
     isAborted: () => status === ABORTED,
     context: parentContext,
