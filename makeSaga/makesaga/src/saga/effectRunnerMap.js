@@ -41,8 +41,18 @@ function runChannelEffect(env, { pattern }, cb) {
 // 发起一个action或者向指定的channel存入一个pattern
 function runPutEffect(env, { channel, action }, cb) {
   try {
-    channel ? channel.put(action) : env.dispatch(action);
-    cb();
+    /**
+     * channel.put返回的可能是个promise
+     * dispatch返回的就是入参
+     */
+    let result = channel ? channel.put(action) : env.dispatch(action);
+    if(is.promise(result)){ // result 可能是个promise
+      result.then(cb, error => {
+        cb(error, true);
+      })
+    } else {
+      cb(result);
+    }
   } catch (e) {
     cb(e, true);
   }
