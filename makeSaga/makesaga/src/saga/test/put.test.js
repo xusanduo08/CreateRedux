@@ -27,7 +27,7 @@ test('test put action', () => {
 
   const p = sagaMiddleware.run(fn);
 
-  p.then(()=>{
+  p.toPromise().then(()=>{
     expect(actual).toEqual(expected);
   })
 });
@@ -45,7 +45,7 @@ test('test put actions into channel', () => {
   let p =  sagaMiddleware.run(fn);
 
   const expected = ['arg0', 'arg1'];
-  p.then(() => {
+  p.toPromise().then(() => {
     expect(buffers).toEqual(expected);
   })
 });
