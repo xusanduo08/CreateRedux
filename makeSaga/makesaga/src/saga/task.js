@@ -1,55 +1,76 @@
 import { RUNNING, DONE, ABORTED } from "./taskStatus";
 import remove from './utils/remove';
 
-function newTask(env, parentContext, def, name){
+/**
+ * 
+ * @param {环境信息} env 
+ * @param {*} parentContext 
+ * @param {promise} def 
+ * @param {当前task的名称，取值一般为对应saga方法的名称} name 
+ * @param {当前task对应的mainTask} mainTask 
+ * @param {当前task完成后需要执行的方法，会被放到task的cont属性上，如果该task是个分叉任务，那么cont属性会被父task重写} cont 
+ */
+function newTask(env, parentContext, def, name, mainTask, cont){
   let status = RUNNING;
 
-  return {
+  function end(result, isErr){
+    if(!isErr){
+      status = DONE;
+      def.resolve(result);
+    } else {
+      status = ABORTED;
+      def.reject(result);
+      // TODO 错误处理
+    }
+
+    task.cont(result, isErr); // 通知父任务：当前任务及其下面的分叉任务已完成
+  }
+
+  const task = {
     env,
     name,
+    cont, // 假如当前task有父任务，那么cont属性会被重写
     isRunning: () => status === RUNNING,
     isAborted: () => status === ABORTED,
     context: parentContext,
-    end: (result, isErr)=>{
-      if(!isErr){
-        def.resolve(result);
-        // TODO 需要等待所有分叉任务完成后才能关闭当前任务
-        if(/**TODO 如果当前任务完成且所有分叉任务也完成的话 */){
-          // TODO需要继续执行，并且执行在父task中的cont方法。告诉父task，本分叉任务完成了
-        } else {
-          // TODO 分叉任务没有完成
-        }
-      } else {
-        status = ABORTED;
-      }
-    },
-    queue: queue(),
+    end,
+    queue: queue(mainTask, end),
     toPromise: ()=> def.promise
   }
+
+  return task
 }
 
-function queue(){
+function queue(mainTask, end){
   const queue = [];
   let completed = false;
-  let parentTask;
-  return {
-    addTask: function(task){ // task：一个分叉任务，将这个分叉任务添加到父级任务中
-      queue.push(task);
-      task.cont = (res, isErr) => {
-        if(completed){
-          return;
+  let result;
+  addTask(mainTask);
+
+  function addTask(task){ // task：一个分叉任务，将这个分叉任务添加到父级任务中
+    queue.push(task);
+    task.cont = (res, isErr) => {
+      if(completed){
+        return;
+      }
+      remove(queue, task); // 从父级任务中移除分叉任务
+      if(isErr){
+        // TODO handle err
+        // 如果出错的话，本任务要取消，同时其他分叉任务也要取消， 父任务也会取消
+      } else {
+        if(task === mainTask){
+          result = res;
         }
-        remove(queue, task); // 从父级任务中移出分叉任务
-        if(isErr){
-          // TODO handle err
-        } else {
-          if(!queue.length){ // TODO 如果分叉任务完成且父任务也完成了，进行下一步
-            completed = true;
-          }
+        if(!queue.length){ // 如果分叉任务完成且父任务也完成了，进行主task的end操作,结束主task
+          completed = true;
+          end(result, false);
         }
       }
-    },
-    isEmpty: () => queue.length === 0
+    }
+  }
+
+  return {
+    addTask
   }
 }
 

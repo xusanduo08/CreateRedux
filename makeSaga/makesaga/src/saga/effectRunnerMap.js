@@ -88,9 +88,13 @@ function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
         }
       }
     }
+    /**
+     * 对于fork产生的task来讲，结束时只要通知父task它结束了就可以了，即调用自身的task.cont方法
+     */
     const child = proc(env, parentTask.context, iterator, false, noop, 'child')
     if(child.isRunning()){
       parentTask.queue.addTask(child);
+      
       cb(child)
     } else if(child.isAborted()){ // 如果分支任务出错的话，取消主任务下的所有分支任务
       // TODO 取消其他分支任务

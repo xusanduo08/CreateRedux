@@ -15,8 +15,9 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   }).catch(e => console.log(e))
   def.promise = promise;
 
+  let mainTask = { name };
   // TODO
-  let task = newTask(env, parentContext, def, name); // proc返回一个task，表示当前的generator任务
+  let task = newTask(env, parentContext, def, name, mainTask, mainCb); // proc返回一个task，表示当前的generator任务
   const executingContext = {
     parentTask: task
   }
@@ -38,8 +39,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       if(!result.done){
         runEffect(result.value, next);
       }else {
-        task.end(result.value, false); // TODO try...catch
-        mainCb(result.value);
+        mainTask.cont(result.value, isErr);
         return result.value;
       }
     } catch(e){
