@@ -52,3 +52,6 @@ fork产生的每个proc都会产生一个task，而每个task都会有一个父t
 * fork产生的task会挂载在parent-task上，parent-task有个queue，专门用来放置其下fork的task
 * fork产生的task是可以取消的
 * 一个task在终止之前，会等待所有分叉任务终止
+* 一个分叉任务aborted，则其主任务也会aborted，其他兄弟分叉任务也会aborted
+* task运行后的结果会通过task自身携带的promise的resolve方法传递出去
+* 来自子任务的错误会自动冒泡到父任务

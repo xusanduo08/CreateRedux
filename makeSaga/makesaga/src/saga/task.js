@@ -26,6 +26,10 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     task.cont(result, isErr); // 通知父任务：当前任务及其下面的分叉任务已完成
   }
 
+  function cancel(){
+    // TODO 取消整个执行树
+  }
+
   const task = {
     env,
     name,
@@ -56,7 +60,9 @@ function queue(mainTask, end){
       remove(queue, task); // 从父级任务中移除分叉任务
       if(isErr){
         // TODO handle err
-        // 如果出错的话，本任务要取消，同时其他分叉任务也要取消， 父任务也会取消
+        // 取消本次任务
+        // 取消其他分叉任务
+        // 将错误向上传递给父task，父任务终止
       } else {
         if(task === mainTask){
           result = res;
