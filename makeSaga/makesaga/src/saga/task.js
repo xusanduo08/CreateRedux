@@ -1,6 +1,6 @@
-import { RUNNING, DONE, ABORTED } from "./taskStatus";
+import { RUNNING, DONE, ABORTED, CANCELLED } from "./taskStatus";
 import remove from './utils/remove';
-
+const noop = () =>{}
 /**
  * 
  * @param {环境信息} env 
@@ -12,10 +12,15 @@ import remove from './utils/remove';
  */
 function newTask(env, parentContext, def, name, mainTask, cont){
   let status = RUNNING;
-
+  let queue = forkQueue(mainTask, end);
   function end(result, isErr){
     if(!isErr){
-      status = DONE;
+      if(result === 'cancel_task'){
+        status = CANCELLED;
+      } else if(status !== CANCELLED) { // TODO 为什么
+        status = DONE;
+      }
+      
       def.resolve(result);
     } else {
       status = ABORTED;
@@ -27,7 +32,11 @@ function newTask(env, parentContext, def, name, mainTask, cont){
   }
 
   function cancel(){
-    // TODO 取消整个执行树
+    if(status === RUNNING){
+      status = CANCELLED;
+      queue.cancelAll(); // 取消以当前task为根的执行树
+      end('cancel_task', false); // 终止自己
+    }
   }
 
   const task = {
@@ -38,14 +47,15 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     isAborted: () => status === ABORTED,
     context: parentContext,
     end,
-    queue: queue(mainTask, end),
+    queue,
+    cancel,
     toPromise: ()=> def.promise
   }
 
   return task
 }
 
-function queue(mainTask, end){
+function forkQueue(mainTask, end){
   const queue = [];
   let completed = false;
   let result;
@@ -59,10 +69,12 @@ function queue(mainTask, end){
       }
       remove(queue, task); // 从父级任务中移除分叉任务
       if(isErr){
-        // TODO handle err
         // 取消本次任务
+        task.end(res, isErr)
         // 取消其他分叉任务
+        cancelAll();
         // 将错误向上传递给父task，父任务终止
+        end(res, isErr)
       } else {
         if(task === mainTask){
           result = res;
@@ -75,8 +87,22 @@ function queue(mainTask, end){
     }
   }
 
+  // 取消本次任务下所有分叉任务
+  function cancelAll(){
+    if(completed){
+      return;
+    }
+    completed = true;
+    queue.forEach(task => {
+      task.cont = noop;
+      task.cancel();
+    })
+    queue = [];
+  }
+
   return {
-    addTask
+    addTask,
+    cancelAll
   }
 }
 

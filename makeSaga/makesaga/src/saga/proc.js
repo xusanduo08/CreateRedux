@@ -16,7 +16,8 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   def.promise = promise;
 
   let mainTask = { name };
-  // TODO
+  // TODO mainTask需要有个cancel方法
+  
   let task = newTask(env, parentContext, def, name, mainTask, mainCb); // proc返回一个task，表示当前的generator任务
   const executingContext = {
     parentTask: task
