@@ -17,7 +17,14 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
 
   let mainTask = { name };
   // TODO mainTask需要有个cancel方法
-  
+
+  mainTask.cancel = function(){
+    if(task.isRunning()){
+      task.cancel();
+      next('cancel_task'); 
+    }
+  }
+
   let task = newTask(env, parentContext, def, name, mainTask, mainCb); // proc返回一个task，表示当前的generator任务
   const executingContext = {
     parentTask: task
@@ -29,6 +36,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   function next(arg, isErr){
     try{
       let result;
+      // TODO is shouldCancel
       if(isErr){
         iterator.throw(arg);
       }else if(isEND(arg)){
