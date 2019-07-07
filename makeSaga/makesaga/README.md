@@ -55,3 +55,6 @@ fork产生的每个proc都会产生一个task，而每个task都会有一个父t
 * 一个分叉任务aborted，则其主任务也会aborted，其他兄弟分叉任务也会aborted
 * task运行后的结果会通过task自身携带的promise的resolve方法传递出去
 * 来自子任务的错误会自动冒泡到父任务
+* 取消任务时还要取消任务里正在阻塞的effect
+* 每个effect都得给自己的cb设置一个cancel方法
+* 能取消的应该只是能阻塞的effect
