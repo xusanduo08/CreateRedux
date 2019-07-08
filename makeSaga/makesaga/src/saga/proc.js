@@ -2,7 +2,7 @@ import effectRunnerMap from './effectRunnerMap';
 import {isEND} from './utils/isEND';
 import * as is from './utils/is';
 import newTask from './task';
-import { CANCELLED } from './taskStatus';
+import { CANCELLED, RUNNING } from './taskStatus';
 
 const noop = ()=>{};
 
@@ -16,11 +16,10 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   }).catch(e => console.log(e))
   def.promise = promise;
 
-  let mainTask = { name };
-  // TODO mainTask需要有个cancel方法
-
+  let mainTask = { name, status: RUNNING };
+  
   mainTask.cancel = function(){
-    if(task.isRunning()){
+    if(mainTask.status === RUNNING){
       mainTask.status = CANCELLED
       task.cancel();
       next('cancel_task'); 
@@ -73,9 +72,11 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       effect.then(cb, error => {
         cb(error, true);
       })
-    } else {
+    } else if(effect && effect.type) {
       let effectRunner = effectRunnerMap[effect.type];
       effectRunner(env, effect.payload, cb, executingContext); // effectRunner(env, effect.payload, cb, parentTask);
+    } else {
+      cb(effect);
     }
   }
 
