@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -87,4 +87,8 @@ export function fork(fnDescription, ...args){
     },
     type: FORK
   }
+}
+
+export function cancelled(){
+  return {payload:{}, type:CANCELLED}
 }

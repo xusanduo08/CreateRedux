@@ -45,6 +45,7 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     cont, // 假如当前task有父任务，那么cont属性会被重写
     isRunning: () => status === RUNNING,
     isAborted: () => status === ABORTED,
+    isCancelled: () => status === CANCELLED || (status === RUNNING && mainTask.status === CANCELLED),
     context: parentContext,
     end,
     queue,
@@ -56,7 +57,7 @@ function newTask(env, parentContext, def, name, mainTask, cont){
 }
 
 function forkQueue(mainTask, end){
-  const queue = [];
+  let queue = []; // 如果使用const声明的话会提示'queue is read-only'
   let completed = false;
   let result;
   addTask(mainTask);

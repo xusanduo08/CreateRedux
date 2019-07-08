@@ -106,10 +106,15 @@ function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
   }
 }
 
+function runCancelledEffect(env, {}, cb, {parentTask}){
+  cb(parentTask.isCancelled());
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
   PUT: runPutEffect,
   CALL: runCallEffect,
-  FORK: runForkEffect
+  FORK: runForkEffect,
+  CANCELLED: runCancelledEffect
 }
