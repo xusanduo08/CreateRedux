@@ -1,4 +1,4 @@
-export default function deffered(){
+export default function deferred(){
   let def = {};
   def.promise = new Promise((resolve, reject) =>{
     def.resolve = resolve;

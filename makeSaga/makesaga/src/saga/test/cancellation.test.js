@@ -1,12 +1,12 @@
 import { take, cancelled } from '../effects';
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from '../sagaMiddleware';
-import deffered from '../utils/deffered';
+import deferred from '../utils/deferred';
 
 test('saga cancellation: take effect', () => {
   let actual = [];
-  let startDef = deffered();
-  let cancelDef = deffered();
+  let startDef = deferred();
+  let cancelDef = deferred();
   const sagaMiddleware = createSagaMiddleware();
   const store = applyMiddleware(sagaMiddleware)(createStore)(()=>{});
 
