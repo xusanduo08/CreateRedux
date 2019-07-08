@@ -57,4 +57,7 @@ fork产生的每个proc都会产生一个task，而每个task都会有一个父t
 * 来自子任务的错误会自动冒泡到父任务
 * 取消任务时还要取消任务里正在阻塞的effect
 * 每个effect都得给自己的cb设置一个cancel方法
-* 能取消的应该只是能阻塞的effect
+* ~~能取消的应该只是能阻塞的effect~~
+* 同步的effect也是可以取消的，比如fork
+* 已经结束的effect不能取消，已经取消的effect也不能再继续执行
+* 根据task树的结构，我们可以知道，取消动作的最底层其实是调用mainTask.cancel()方法
