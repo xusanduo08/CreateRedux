@@ -28,6 +28,9 @@ class App extends Component {
       payload: 'saga test channel'
     })
   }
+  cancelTask(){
+    this.props.task.cancel();
+  }
 
   render() {
     return (
@@ -36,6 +39,7 @@ class App extends Component {
         <button onClick={this.doWork2.bind(this)} id='btn'>doWork2</button>
         <button onClick={this.doWork3.bind(this)} id='btn'>doWork3</button>
         <button onClick={this.doWork4.bind(this)} id='btn'>doWork4</button>
+        <button onClick={this.cancelTask.bind(this)} id='btn'>cancelTask</button>
         <p>{this.props.text}</p>
       </div>
     );

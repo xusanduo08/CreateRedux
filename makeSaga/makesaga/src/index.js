@@ -6,20 +6,17 @@ import * as serviceWorker from './serviceWorker';
 import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import reducer from './reducer';
-import {pSaga, forkSaga} from './sagas';
+import {pSaga, forkSaga, cancelSaga} from './sagas';
 import sagaMiddleware from './saga/sagaMiddleware';
 
 const easySaga = sagaMiddleware();
 
 const store = createStore(reducer, applyMiddleware(easySaga));
-let task = easySaga.run(forkSaga);
-
-task.toPromise().then(actual => {
-  console.log(actual);
-});
+let task = easySaga.run(cancelSaga);
+task.toPromise().then(v => console.log(v));
 
 ReactDOM.render(<Provider store={store}>
-    <App />
+    <App task={task} />
     </Provider>, document.getElementById('root'));
 
 

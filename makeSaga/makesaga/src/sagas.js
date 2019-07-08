@@ -1,5 +1,5 @@
 
-import { take, actionChannel, put, call, fork } from './saga/effects.js';
+import { take, actionChannel, put, call, fork, cancelled } from './saga/effects.js';
 
 function cal(a, b) {
   return new Promise(resolve=>{
@@ -36,4 +36,18 @@ function* forkSaga(){
   return task.toPromise()
 }
 
-export {pSaga, forkSaga}
+function* cancelSaga(){
+  let result = [];
+  result.push(yield 'start action');
+  try{
+    yield take('action');
+  } finally{
+    if(yield cancelled()){
+      result.push('cancelled');
+      console.log(result);
+    }
+  }
+  
+}
+
+export {pSaga, forkSaga, cancelSaga}
