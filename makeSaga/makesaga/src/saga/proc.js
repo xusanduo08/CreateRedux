@@ -21,7 +21,6 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   mainTask.cancel = function(){
     if(mainTask.status === RUNNING){
       mainTask.status = CANCELLED
-      task.cancel();
       next('cancel_task'); 
     }
   }
@@ -31,6 +30,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
     parentTask: task
   }
 
+  mainCb.cancel = task.cancel // 附加取消逻辑，这样取消操作可以传递到子effect中
   next();
   return task;
   
