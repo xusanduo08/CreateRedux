@@ -1,11 +1,12 @@
 import {isEND, END} from './utils/isEND';
+import remove from './utils/remove';
 
 const stdChannel = (takers = []) => {  // 主channel，存储action和对应的操作
   return {
     put: (action) => {  // 发起一个action
       if(isEND(action)){ // 如果发起的是一个END的话，则终止所有saga
         takers.forEach(taker => {
-          taker.cb(END);
+          taker(END);
         })
         takers = [];
         return;
@@ -16,18 +17,18 @@ const stdChannel = (takers = []) => {  // 主channel，存储action和对应的�
         let taker = currTakers[i];
         if (taker.matcher(action.type)) {
           desTakes.push(i)
-          taker.cb(action);
+          taker(action);
         }
       }
       
       takers = takers.filter((item, index) => !(desTakes.indexOf(index) >=0));
     },
     take: (cb, matcher='*', type) => { // 装入一个action和对应的cb
-      takers.push({
-        matcher,
-        cb,
-        type
-      })
+      cb.matcher = matcher;
+      takers.push(cb);
+      cb.cancel = () => {
+        remove(takers, cb);
+      }
     }
   }
 }
@@ -42,7 +43,7 @@ export const channel = (buffers)=>{
     put: (action) => {  // 发起一个action
       if(isEND(action)){ // 如果发起的是一个END的话，则终止所有saga
         takers.forEach(taker => {
-          taker.cb(END);
+          taker(END);
         })
         takers = [];
         return;
@@ -51,15 +52,16 @@ export const channel = (buffers)=>{
         return buffers.push(action);
       }
       let taker = takers.shift();
-      taker.cb(action);
+      taker(action);
     },
     take: (cb) => { // 装入一个action和对应的cb
       if(buffers.length !== 0){ // 如果缓存中有数据，则直接消耗一次buffer
         return cb(buffers.shift());
       }
-      takers.push({
-        cb
-      })
+      takers.push(cb);
+      cb.cancel = () => {
+        remove(takers, cb);
+      }
     }
   }
 }
