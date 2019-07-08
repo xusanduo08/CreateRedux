@@ -43,7 +43,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
         mainTask.status = CANCELLED;
         next.cancel();
         
-        // 调用generator的return方法，这会自动跳到finally中
+        // 调用generator的return方法结束generator，在结束之前代码会自动跳到finally中
         result = is.func(iterator.return) ? iterator.return('cancel_task') : {value: 'cancel_task', done: true};
       } else if(isErr){
         iterator.throw(arg);
@@ -54,7 +54,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       }
       
       if(!result.done){
-        runEffect(result.value, next);
+        digestEffect(result.value, next);
       }else {
         mainTask.cont(result.value, isErr);
         return result.value;
@@ -77,6 +77,29 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       let effectRunner = effectRunnerMap[effect.type];
       effectRunner(env, effect.payload, cb, executingContext); // effectRunner(env, effect.payload, cb, parentTask);
     }
+  }
+
+  function digestEffect(effect, cb){
+    let settled; // 是否已经完成或者取消
+
+    function currCb(res, isErr){ // 真正传入effectRunner方法中的回调，effectRunner会对该方法设置cancel方法
+      if(settled){
+        return
+      }
+      settled = true;
+      cb.cancel = noop;
+      cb(res, isErr);
+    }
+    currCb.cancel = noop;
+    cb.cancel = ()=>{
+      if(settled){
+        return
+      }
+      settled = true;
+      currCb.cancel();
+      currCb.cancel = noop;
+    }
+    runEffect(effect, currCb);
   }
 
 }
