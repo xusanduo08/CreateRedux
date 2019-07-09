@@ -63,20 +63,20 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
     }
   }
   
-  function runEffect(effect, cb){
+  function runEffect(effect, currCb){
     // TODO 处理cb的cancel方法，需要在effectRunner设置cb.cancel=method方法
-    cb.cancel = noop;
+    currCb.cancel = noop;
     if(is.iterator(effect)){
-      proc(env, {}, effect, false, cb);
+      proc(env, {}, effect, false, currCb);
     } else if(is.promise(effect)){
-      effect.then(cb, error => {
-        cb(error, true);
+      effect.then(currCb, error => {
+        currCb(error, true);
       })
     } else if(effect && effect.type) {
       let effectRunner = effectRunnerMap[effect.type];
-      effectRunner(env, effect.payload, cb, executingContext); // effectRunner(env, effect.payload, cb, parentTask);
+      effectRunner(env, effect.payload, currCb, executingContext); // effectRunner(env, effect.payload, cb, parentTask);
     } else {
-      cb(effect);
+      currCb(effect);
     }
   }
 
