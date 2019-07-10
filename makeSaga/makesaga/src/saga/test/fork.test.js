@@ -32,3 +32,35 @@ test('should interpret returned promise. fork(() => promise)', () => {
       expect(actual).toEqual('a')
     })
 })
+
+test('should handle promise that resolves undefined properly. fork(() => Promise.resolve(undefined))', () => {
+  const middleware = createSagaMiddleware()
+  createStore(() => ({}), {}, applyMiddleware(middleware))
+
+  function* genFn() {
+    const task = yield fork(() => Promise.resolve(undefined))
+    return task.toPromise()
+  }
+
+  return middleware
+    .run(genFn)
+    .toPromise()
+    .then(actual => {
+      expect(actual).toEqual(undefined)
+    })
+})
+
+test('should interpret returned iterator. fork(()=>iterator)', () => {
+  const middleware = createSagaMiddleware();
+  createStore(()=>{}, {}, applyMiddleware(middleware));
+
+  function* getFn(){
+    const task = yield fork(function*(){
+      yield 1;
+      return 'b'
+    })
+    return task.toPromise()
+  }
+
+  return middleware.run(getFn).toPromise().then(actual => expect(actual).toEqual('b'));
+})
