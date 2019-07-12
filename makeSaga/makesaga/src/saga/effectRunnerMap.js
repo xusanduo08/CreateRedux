@@ -76,8 +76,14 @@ function runCallEffect(env, {context, fn, args }, cb) {
   }
 }
 
-// 从主任务中分出一个分支任务
-function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
+/**
+ * 
+ * @param {*} env 
+ * @param {*} param1 detach是否时分离任务，true是，false否
+ * @param {*} cb 当前任务执行完毕后需要执行的回调
+ * @param {*} parentTask 父级任务 
+ */
+function runForkEffect(env, {context, fn, args, detached}, cb, {parentTask}){
   try{
     const result = fn.apply(context, args);
     let iterator = null;
@@ -94,14 +100,18 @@ function runForkEffect(env, {context, fn, args}, cb, {parentTask}){
      * 对于fork产生的task来讲，结束时只要通知父task它结束了就可以了，即调用自身的task.cont方法
      */
     const child = proc(env, parentTask.context, iterator, false, noop, fn.name)
-    if(child.isRunning()){
-      parentTask.queue.addTask(child);
-      
-      cb(child)
-    } else if(child.isAborted()){ // 如果分支任务出错的话，取消主任务下的所有分支任务
-      // TODO 取消其他分支任务
-    } else {
+    if(detached){
       cb(child);
+    } else {
+      if(child.isRunning()){
+        parentTask.queue.addTask(child);
+        
+        cb(child)
+      } else if(child.isAborted()){ // 如果分支任务出错的话，取消主任务下的所有分支任务
+        // TODO 取消其他分支任务
+      } else {
+        cb(child);
+      }
     }
   } catch(e){
     cb(e, true)

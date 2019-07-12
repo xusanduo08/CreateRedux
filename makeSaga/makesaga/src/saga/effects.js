@@ -89,6 +89,14 @@ export function fork(fnDescription, ...args){
   }
 }
 
+export function spawn(fnDescription, ...args){
+  let eff = fork(fnDescription, ...args);
+  return {
+    payload: {...eff.payload, detached: true},
+    type: FORK
+  }
+}
+
 export function cancelled(){
   return {payload:{}, type:CANCELLED}
 }

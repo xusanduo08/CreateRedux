@@ -40,6 +40,8 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       // TODO is shouldCancel
       if(arg === 'cancel_task'){
         mainTask.status = CANCELLED;
+
+        // 取消当前的effect
         next.cancel();
         
         // 调用generator的return方法结束generator，在结束之前代码会自动跳到finally中
