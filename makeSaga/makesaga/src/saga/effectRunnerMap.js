@@ -130,13 +130,18 @@ function runJoinEffect(env, {taskOrTasks}, cb, {parentTask}){ // 等待指定任
     let generateCb = (taskOrTasks, parentCb) => { // 将parentCb分解，当所有joiners执行完毕时再执行parentCb
       let totalCount = taskOrTasks.length;
       let exCount = 0;
+      let completed = false;
       let resultArray = new Array(totalCount);
       let currCb = (index) => {
         return (result, isErr) => {
+          if(completed){
+            return
+          }
           if(!isErr){
             exCount++;
             resultArray[index] = result;
             if(exCount === totalCount){
+              completed = true;
               parentCb(resultArray);
             }
           } else {
@@ -150,14 +155,24 @@ function runJoinEffect(env, {taskOrTasks}, cb, {parentTask}){ // 等待指定任
     }
     let childCb = generateCb(taskOrTasks,cb);
     taskOrTasks.forEach((task, index) => {
-      task.joiners.push({cb: childCb[index]});
+      if(task.isRunning()){
+        task.joiners.push({cb: childCb[index]});
+      } else {
+        childCb[index](task.result())
+      }
+      
     })
 
   } else {
-    taskOrTasks.joiners.push({cb});
+    if(taskOrTasks.isRunning()){
+      taskOrTasks.joiners.push({cb});
       cb.cancel = () => {
-        remove(taskOrTasks.joiners, cb);
+        remove(taskOrTasks.joiners, c5  +b);
       }
+    } else {
+      cb(taskOrTasks.result())
+    }
+    
   }
   
 }
