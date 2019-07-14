@@ -13,6 +13,7 @@ const noop = () =>{}
 function newTask(env, parentContext, def, name, mainTask, cont){
   let status = RUNNING;
   let queue = forkQueue(mainTask, end);
+  let taskResult;
   function end(result, isErr){
     if(!isErr){
       if(result === 'cancel_task'){
@@ -20,7 +21,7 @@ function newTask(env, parentContext, def, name, mainTask, cont){
       } else if(status !== CANCELLED) { // TODO 为什么
         status = DONE;
       }
-      
+      taskResult = result;
       def.resolve(result);
     } else {
       status = ABORTED;
@@ -54,6 +55,7 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     joiners: [], // 放置当前正在等待该任务的回调，任务结束后会执行这些回调
     queue,
     cancel,
+    result: () => taskResult,
     toPromise: ()=> def.promise
   }
 
