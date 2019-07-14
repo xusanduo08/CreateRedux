@@ -9,9 +9,9 @@ const defs = [deferred(), deferred(), deferred(), deferred()]
 Promise.resolve()
   // .then(() => childAdef.resolve('childA resolved'))
   .then(() => defs[0].resolve('leaf 1 resolved'))
-  .then(() => childBdef.resolve('childB resolved'))
+  // .then(() => childBdef.resolve('childB resolved'))
   .then(() => defs[1].resolve('leaf 2 resolved'))
-  .then(() => mainDef.reject('main error')) //
+  .then(() => mainDef.resolve('main error')) //
   .then(() => defs[2].resolve('leaf 3 resolved'))
   .then(() => defs[3].resolve('leaf 4 resolved'))
 
@@ -20,19 +20,18 @@ function* root() {
     actual.push(yield call(main))
   } catch (e) {
     actual.push('root caught ' + e)
+    console.log(actual)
   }
 }
 
 function* main() {
   try {
     // yield fork(childA)
-    // yield fork(childB)
+    yield fork(childB)
     actual.push(yield mainDef.promise)
-  } catch (e) {
-    actual.push(e)
-    throw e
+    throw new Error('error')
   } finally {
-    if (yield cancelled()) {
+    if (yield cancelled()) {  // 虽然出错了，但是这部分代码不会执行
       actual.push('main cancelled')
     }
   }
