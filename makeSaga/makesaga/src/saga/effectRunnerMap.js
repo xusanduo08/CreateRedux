@@ -123,12 +123,43 @@ function runCancelledEffect(env, {}, cb, {parentTask}){
   cb(parentTask.isCancelled());
 }
 
-function runJoinEffect(env, {task}, cb, {parentTask}){ // 等待指定任务完成再继续往下执行
+function runJoinEffect(env, {taskOrTasks}, cb, {parentTask}){ // 等待指定任务完成再继续往下执行
   // 等待task结束再执行cb
-  task.joiners.push({cb});
-  cb.cancel = () => {
-    remove(task.joiners, cb);
+  if(is.array(taskOrTasks)){
+
+    let generateCb = (taskOrTasks, parentCb) => { // 将parentCb分解，当所有joiners执行完毕时再执行parentCb
+      let totalCount = taskOrTasks.length;
+      let exCount = 0;
+      let resultArray = new Array(totalCount);
+      let currCb = (index) => {
+        return (result, isErr) => {
+          if(!isErr){
+            exCount++;
+            resultArray[index] = result;
+            if(exCount === totalCount){
+              parentCb(resultArray);
+            }
+          } else {
+            parentCb(result, isErr);
+          }
+        }
+      }
+      return taskOrTasks.map((task, index) => {
+        return currCb(index);
+      })
+    }
+    let childCb = generateCb(taskOrTasks,cb);
+    taskOrTasks.forEach((task, index) => {
+      task.joiners.push({cb: childCb[index]});
+    })
+
+  } else {
+    taskOrTasks.joiners.push({cb});
+      cb.cancel = () => {
+        remove(taskOrTasks.joiners, cb);
+      }
   }
+  
 }
 
 export default {

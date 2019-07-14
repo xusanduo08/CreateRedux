@@ -60,4 +60,18 @@ function * joinSaga(){
   console.log(actual);
 }
 
-export {pSaga, forkSaga, cancelSaga, joinSaga}
+function* joinSagas(){
+  
+  let task1= yield fork(function*(){
+    let result = yield take('join saga');
+    return result;
+  })
+  let task2= yield fork(function*(){
+    let result = yield take('join saga');
+    return result;
+  })
+  let actual = yield join([task1, task2]);
+  console.log(actual);
+}
+
+export {pSaga, forkSaga, cancelSaga, joinSaga, joinSagas}

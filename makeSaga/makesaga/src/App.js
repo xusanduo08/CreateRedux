@@ -37,6 +37,14 @@ class App extends Component {
       type:'join saga'
     })
   }
+  joinTasks(){
+    this.props.dispatch({
+      type:'join saga'
+    })
+    this.props.dispatch({
+      type:'join saga'
+    })
+  }
 
   render() {
     return (
@@ -47,6 +55,7 @@ class App extends Component {
         <button onClick={this.doWork4.bind(this)} id='btn'>doWork4</button>
         <button onClick={this.cancelTask.bind(this)} id='btn'>cancelTask</button>
         <button onClick={this.joinTask.bind(this)} id='btn'>join saga</button>
+        <button onClick={this.joinTasks.bind(this)} id='btn'>join sagas</button>
         <p>{this.props.text}</p>
       </div>
     );

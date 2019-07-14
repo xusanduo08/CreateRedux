@@ -101,6 +101,6 @@ export function cancelled(){
   return {payload:{}, type:CANCELLED}
 }
 
-export function join(task){ // 等待fork任务的结束
-  return {payload:{task}, type: JOIN}
+export function join(taskOrTasks){ // 等待fork任务的结束
+  return {payload:{taskOrTasks}, type: JOIN}
 }
