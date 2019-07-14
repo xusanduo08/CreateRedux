@@ -8,12 +8,13 @@ import {Provider} from 'react-redux';
 import reducer from './reducer';
 import {pSaga, forkSaga, cancelSaga, joinSaga, joinSagas} from './sagas';
 import main from './cancellationSaga';
+import root from './forkJoin';
 import sagaMiddleware from './saga/sagaMiddleware';
 
 const easySaga = sagaMiddleware();
 
 const store = createStore(reducer, applyMiddleware(easySaga));
-let task = easySaga.run(joinSagas);
+let task = easySaga.run(root);
 task.toPromise().then(v => console.log(v));
 
 ReactDOM.render(<Provider store={store}>

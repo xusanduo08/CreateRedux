@@ -77,7 +77,8 @@ function forkQueue(mainTask, end){
       remove(queue, task); // 从父级任务中移除分叉任务
       if(isErr){
         // 取消本次任务
-        task.end(res, isErr)
+        // task.cancel(res, isErr)
+       
         // 取消其他分叉任务
         cancelAll();
         // 将错误向上传递给父task，父任务终止

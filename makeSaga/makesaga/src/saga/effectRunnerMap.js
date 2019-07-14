@@ -64,7 +64,7 @@ function runCallEffect(env, {context, fn, args }, cb) {
   try {
     const result = fn.apply(context, args);
     if(is.iterator(result)){
-      return proc(env, {}, result, false, cb);
+      return proc(env, {}, result, false, cb, fn.name);
     } else if(is.promise(result)){
       result.then(cb, error => {
         cb(error, true);
@@ -179,7 +179,7 @@ function runJoinEffect(env, {taskOrTasks}, cb, {parentTask}){ // 等待指定任
     if(taskOrTasks.isRunning()){
       taskOrTasks.joiners.push({cb});
       cb.cancel = () => {
-        remove(taskOrTasks.joiners, c5  +b);
+        remove(taskOrTasks.joiners, cb);
       }
     } else {
       cb(taskOrTasks.result())

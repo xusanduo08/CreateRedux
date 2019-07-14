@@ -2,7 +2,7 @@ import effectRunnerMap from './effectRunnerMap';
 import {isEND} from './utils/isEND';
 import * as is from './utils/is';
 import newTask from './task';
-import { CANCELLED, RUNNING } from './taskStatus';
+import { CANCELLED, RUNNING, ABORTED } from './taskStatus';
 
 const noop = ()=>{};
 
@@ -47,21 +47,26 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
         // 调用generator的return方法结束generator，在结束之前代码会自动跳到finally中
         result = is.func(iterator.return) ? iterator.return('cancel_task') : {value: 'cancel_task', done: true};
       } else if(isErr){
-        iterator.throw(arg);
+        result = iterator.throw(arg);
       }else if(isEND(arg)){
         result = {done: true}
       } else {
         result = iterator.next(arg);
       }
       
-      if(!result.done){
+      if(!result.done && !isErr){
         digestEffect(result.value, next);
-      }else {
+      }else if(isErr) {
+        mainTask.cont(arg, isErr);
+        return result.value;
+      } else {
         mainTask.cont(result.value, isErr);
         return result.value;
       }
     } catch(e){
       console.error(e)
+      mainTask.status = ABORTED;
+      mainTask.cont(e, true);
     }
   }
   
