@@ -4,6 +4,7 @@ import matcher from './matcher';
 import { isEND } from './utils/isEND';
 import * as is from './utils/is';
 import proc from './proc';
+import remove from './utils/remove';
 
 // effectRunnerMap统一catch错误，出现错误后调用cb(err, true)，交给下一次next执行
 const noop = ()=>{};
@@ -122,11 +123,20 @@ function runCancelledEffect(env, {}, cb, {parentTask}){
   cb(parentTask.isCancelled());
 }
 
+function runJoinEffect(env, {task}, cb, {parentTask}){ // 等待指定任务完成再继续往下执行
+  // 等待task结束再执行cb
+  task.joiners.push({cb});
+  cb.cancel = () => {
+    remove(task.joiners, cb);
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
   PUT: runPutEffect,
   CALL: runCallEffect,
   FORK: runForkEffect,
-  CANCELLED: runCancelledEffect
+  CANCELLED: runCancelledEffect,
+  JOIN: runJoinEffect
 }

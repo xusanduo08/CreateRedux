@@ -1,5 +1,5 @@
 
-import { take, actionChannel, put, call, fork, cancelled } from './saga/effects.js';
+import { take, actionChannel, put, call, fork, cancelled, join } from './saga/effects.js';
 
 function cal(a, b) {
   return new Promise(resolve=>{
@@ -50,4 +50,14 @@ function* cancelSaga(){
   
 }
 
-export {pSaga, forkSaga, cancelSaga}
+function * joinSaga(){
+  let actual = [];
+  let task= yield fork(function*(){
+    let result = yield take('join saga');
+    return result;
+  })
+  actual.push(yield join(task));
+  console.log(actual);
+}
+
+export {pSaga, forkSaga, cancelSaga, joinSaga}

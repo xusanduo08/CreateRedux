@@ -4,3 +4,4 @@ export const PUT = 'PUT';
 export const CALL = 'CALL';
 export const FORK = 'FORK';
 export const CANCELLED = 'CANCELLED';
+export const JOIN = 'JOIN';

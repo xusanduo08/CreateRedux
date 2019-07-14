@@ -27,7 +27,10 @@ function newTask(env, parentContext, def, name, mainTask, cont){
       def.reject(result);
       // TODO 错误处理
     }
-
+    task.joiners.forEach(joiner => { // 执行当前正在等待该任务的回调
+      joiner.cb(result);
+    })
+    task.joiners = null;
     task.cont(result, isErr); // 通知父任务：当前任务及其下面的分叉任务已完成
   }
 
@@ -48,6 +51,7 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     isCancelled: () => status === CANCELLED || (status === RUNNING && mainTask.status === CANCELLED),
     context: parentContext,
     end,
+    joiners: [], // 放置当前正在等待该任务的回调，任务结束后会执行这些回调
     queue,
     cancel,
     toPromise: ()=> def.promise
