@@ -56,7 +56,7 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
       
       if(!result.done && !isErr){
         digestEffect(result.value, next);
-      }else if(isErr) {
+      }else if(isErr) {// 如果出错的话，将错误信息传递下去
         mainTask.cont(arg, isErr);
         return result.value;
       } else {
