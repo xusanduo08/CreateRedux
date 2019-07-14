@@ -88,7 +88,19 @@ function runForkEffect(env, {context, fn, args, detached}, cb, {parentTask}){
   try{
     const result = fn.apply(context, args);
     let iterator = null;
-    if(!is.iterator(result)){
+    let resolve = false;
+    if(is.promise(result)){ // promise要二次包装，这么做是为了触发task的end方法，以便将promise的结果返回出去
+      iterator = {
+        next:(arg)=>{
+          if(!resolve){
+            resolve = true;
+            return {value:result, done: false}
+          } else {
+            return {value:arg, done: true}
+          }
+        }
+      }
+    } else if(!is.iterator(result)){
       iterator = {
         next:()=>{
           return {value:result, done: true}
