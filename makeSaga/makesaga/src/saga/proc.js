@@ -47,24 +47,21 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
         // 调用generator的return方法结束generator，在结束之前代码会自动跳到finally中
         result = is.func(iterator.return) ? iterator.return('cancel_task') : {value: 'cancel_task', done: true};
       } else if(isErr){
-        result = iterator.throw(arg);
+        
+        result = iterator.throw(arg); // throw执行后，会附带执行一次next方法，也就是finally区块里的内容并返回执行结果
       }else if(isEND(arg)){
         result = {done: true}
       } else {
         result = iterator.next(arg);
       }
       
-      if(!result.done && !isErr){
+      if(!result.done){
         digestEffect(result.value, next);
-      }else if(isErr) {// 如果出错的话，将错误信息传递下去
-        mainTask.cont(arg, isErr);
-        return result.value;
-      } else {
+      }else {
         mainTask.cont(result.value, isErr);
         return result.value;
       }
     } catch(e){
-      console.error(e)
       mainTask.status = ABORTED;
       mainTask.cont(e, true);
     }

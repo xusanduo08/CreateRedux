@@ -76,7 +76,7 @@ function forkQueue(mainTask, end){
       }
       remove(queue, task); // 从父级任务中移除分叉任务
       if(isErr){
-        // 取消本次任务
+        // ~~取消本次任务~~，当前任务已经时aborted状态了，没必要再去取消一次了
         // task.cancel(res, isErr)
        
         // 取消其他分叉任务
