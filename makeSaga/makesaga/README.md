@@ -67,3 +67,41 @@ TODO: 整理下取消逻辑
 __task__:等待一个或多个fork出来的task完成后再继续下去-----2019/7/14
 
 当前任务出错，会取消其下的所有子任务，但该任务不会执行取消动作
+
+`throw`方法抛出的错误要被内部捕获，前提是必须至少执行过一次`next`方法
+`throw`方法被捕获后，会附带执行下一条`yield`表达式，也就是说，会附带执行一次`next`方法
+
+```javascript
+  function* gen(){
+    try{
+      yield 3;
+      yield 4
+    } catch(e){
+      console.log(e)
+    } finally{
+      yield 5
+    }
+  }
+
+  let it = gen();
+  it.next(); // {value: 3, done: false}
+  it.throw('err'); // 错误被捕获，输出 err, 同时顺带执行一次next，输出 {value: 5, done: false}
+  it.next(); // {value: undefined, done: true}
+```javascript
+
+```javascript
+// 如果错误没有在函数内部被catch的话，那么在错误被throw后的下次执行next时，错误会抛出，被外部代码捕获
+function* gen(){
+  try{
+    yield 3;
+    yield 4
+  } finally {
+    yield 5
+  }
+}
+let it = gen();
+it.next(); // {value: 3, done: false}
+it.throw('err'); // {value: 5, done: false}
+it.next(); // 出错，err
+it.next(); // {value: undefined, done: true}
+```javascript
