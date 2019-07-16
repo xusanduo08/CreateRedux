@@ -37,7 +37,6 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   function next(arg, isErr){
     try{
       let result;
-      // TODO is shouldCancel
       if(arg === 'cancel_task'){
         mainTask.status = CANCELLED;
 
@@ -47,8 +46,10 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
         // 调用generator的return方法结束generator，在结束之前代码会自动跳到finally中
         result = is.func(iterator.return) ? iterator.return('cancel_task') : {value: 'cancel_task', done: true};
       } else if(isErr){
-        
-        result = iterator.throw(arg); // throw执行后，会附带执行一次next方法，也就是finally区块里的内容并返回执行结果
+        /**
+         * throw执行后，如果代码中有try...catch或者try...finally结构，则会附带执行一次next方法，也就是catch或者finally区块里的内容并返回执行结果
+         */
+        result = iterator.throw(arg);
       }else if(isEND(arg)){
         result = {done: true}
       } else {
@@ -68,7 +69,9 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
   }
   
   function runEffect(effect, currCb){
-    // TODO 处理cb的cancel方法，需要在effectRunner设置cb.cancel=method方法
+    /**
+     * 需要在effectRunner中设置cb.cancel=method，以便能取消effect
+     */
     currCb.cancel = noop;
     if(is.iterator(effect)){
       proc(env, {}, effect, false, currCb);

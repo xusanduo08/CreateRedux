@@ -26,7 +26,6 @@ function newTask(env, parentContext, def, name, mainTask, cont){
     } else {
       status = ABORTED;
       def.reject(result);
-      // TODO 错误处理
     }
     task.joiners.forEach(joiner => { // 执行当前正在等待该任务的回调
       joiner.cb(result);
@@ -74,7 +73,7 @@ function forkQueue(mainTask, end){
       if(completed){
         return;
       }
-      remove(queue, task); // 从父级任务中移除分叉任务
+      remove(queue, task); // 从父级任务中移除分叉任务或者mainTask
       if(isErr){
         // ~~取消本次任务~~，当前任务已经时aborted状态了，没必要再去取消一次了
         // task.cancel(res, isErr)
@@ -87,7 +86,7 @@ function forkQueue(mainTask, end){
         if(task === mainTask){
           result = res;
         }
-        if(!queue.length){ // 如果分叉任务完成且父任务也完成了，进行主task的end操作,结束主task
+        if(!queue.length){ // 如果分叉任务完成且mainTask也完成了，进行父task的end操作,结束父task
           completed = true;
           end(result, false);
         }
