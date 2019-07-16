@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -107,4 +107,8 @@ export function join(taskOrTasks){ // 等待fork任务的结束
 
 export function cancel(taskOrTasks){
   return {payload:{taskOrTasks}, type: CANCEL}
+}
+
+export function select(selector, ...args){
+  return {payload:{selector, args}, type: SELECT}
 }

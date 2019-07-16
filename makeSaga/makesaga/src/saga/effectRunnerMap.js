@@ -203,6 +203,15 @@ function runCancelEffect(env, {taskOrTasks}, cb){
   }
 }
 
+function runSelectEffect(env, {selector, args}, cb){
+  try{
+    let result = selector(env.getState(), args);
+    cb(result);
+  } catch(e){
+    cb(e, true)
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -211,5 +220,6 @@ export default {
   FORK: runForkEffect,
   CANCELLED: runCancelledEffect,
   JOIN: runJoinEffect,
-  CANCEL: runCancelEffect
+  CANCEL: runCancelEffect,
+  SELECT: runSelectEffect
 }

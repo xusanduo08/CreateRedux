@@ -10,7 +10,7 @@ function sagaMiddlewareFactory (){
   const stdChannel = channel(takers);
   let runSaga;
 
-  function sagaMiddleware({dispatch}){
+  function sagaMiddleware({dispatch, getState}){
     // 要能把action和对应的操作注册到某个地方保存起来
     // 等发起action时要去这个地方找，看有没有对应的操作，有的话则执行该操作，没有就不做操作。
     // 1.存储action和对应的cb
@@ -21,7 +21,8 @@ function sagaMiddlewareFactory (){
       let iterator = saga();
       const env = {
         channel: stdChannel,
-        dispatch
+        dispatch,
+        getState
       }
       let task = proc(env, {}, iterator, /** isRoot */true, noop, saga.name);
       return task;

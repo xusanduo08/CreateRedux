@@ -6,3 +6,4 @@ export const FORK = 'FORK';
 export const CANCELLED = 'CANCELLED';
 export const JOIN = 'JOIN';
 export const CANCEL = 'CANCEL';
+export const SELECT = 'SELECT';
