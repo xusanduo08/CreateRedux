@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, APPLY } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -50,6 +50,8 @@ export function call(fnDescription, ...args){
     fn = fnDescription;
   } else if(is.array(fnDescription)){ // call([context, fn], ...args)  或者 call([context, 'fnName'], ...args)
     [context, fn] = fnDescription;
+  } else {
+    ;({context, fn} = fnDescription)
   }
 
   if(context && is.string(fn) && is.func(context[fn])){
@@ -111,4 +113,18 @@ export function cancel(taskOrTasks){
 
 export function select(selector, ...args){
   return {payload:{selector, args}, type: SELECT}
+}
+
+export function apply(context, fn, ...args){
+  if(context && is.string(fn) && is.func(context[fn])){
+    fn = context[fn];
+  }
+  return {
+    payload: {
+      context,
+      fn,
+      args
+    },
+    type: CALL
+  }
 }
