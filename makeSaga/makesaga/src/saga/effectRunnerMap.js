@@ -189,6 +189,20 @@ function runJoinEffect(env, {taskOrTasks}, cb, {parentTask}){ // 等待指定任
   
 }
 
+function runCancelEffect(env, {taskOrTasks}, cb){
+  try{
+    if(is.array(taskOrTasks)){
+      taskOrTasks.map(task => task.cancel())
+      cb();
+    } else {
+      taskOrTasks.cancel();
+      cb();
+    }
+  }catch(e){
+    cb(e, true)
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -196,5 +210,6 @@ export default {
   CALL: runCallEffect,
   FORK: runForkEffect,
   CANCELLED: runCancelledEffect,
-  JOIN: runJoinEffect
+  JOIN: runJoinEffect,
+  CANCEL: runCancelEffect
 }
