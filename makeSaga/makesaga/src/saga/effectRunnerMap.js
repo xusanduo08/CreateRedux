@@ -203,7 +203,7 @@ function runCancelEffect(env, {taskOrTasks}, cb){
   }
 }
 
-function runSelectEffect(env, {selector, args}, cb){
+function runSelectEffect(env, {selector=v=>v, args}, cb){
   try{
     let result = selector(env.getState(), args);
     cb(result);
