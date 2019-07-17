@@ -13,3 +13,4 @@ export const GET_CONTEXT = 'GET_CONTEXT';
 export const RACE = 'RACE';
 export const DELAY = 'DELAY';
 export const ALL = 'ALL';
+export const CPS = 'CPS';

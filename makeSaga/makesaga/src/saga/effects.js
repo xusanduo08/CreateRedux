@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT, RACE, DELAY, ALL } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT, RACE, DELAY, ALL, CPS } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -154,4 +154,25 @@ export function delay(time){
 
 export function all(effects){
   return {payload:{effects}, type: ALL}
+}
+
+export function cps(fnDescription, ...args){
+  let context = null;
+  let fn;
+  if(is.array(fnDescription)){
+    [context, fn] = fnDescription
+  } else if(is.func(fnDescription)){
+    fn = fnDescription;
+  }
+  if(context && is.string(fn) && is.func(context[fn])){
+    fn = context[fn];
+  }
+  return {
+    payload: {
+      context,
+      fn, 
+      args
+    },
+    type: CPS
+  }
 }

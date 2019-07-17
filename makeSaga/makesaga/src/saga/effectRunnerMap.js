@@ -346,6 +346,26 @@ function runAllEffect(env, {effects}, cb, {digestEffect}){
   })
 }
 
+function runCpsEffect(env, {context, fn, args}, cb){
+  try{
+    const cpsCb = (err, res) => {
+      if(is.undef(err)){
+        cb(res)
+      } else {
+        cb(err, true)
+      }
+    }
+
+    fn.apply(context, args.concat(cpsCb))
+
+    if(cpsCb.cancel){
+      cb.cancel = cpsCb.cancel
+    }
+  } catch(e) {
+    cb(e, true);
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -361,5 +381,6 @@ export default {
   GET_CONTEXT: runGetContextEffect,
   RACE: runRaceEffect,
   DELAY: runDelayEffect,
-  ALL: runAllEffect
+  ALL: runAllEffect,
+  CPS: runCpsEffect
 }
