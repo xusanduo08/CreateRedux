@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT, RACE } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -139,4 +139,11 @@ export function setContext(props){
 
 export function getContext(prop){
   return {payload: {prop}, type: GET_CONTEXT}
+}
+
+export function race(effects){
+  return {
+    payload:{effects},
+    type: RACE
+  }
 }

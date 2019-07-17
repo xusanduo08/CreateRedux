@@ -243,6 +243,53 @@ function runGetContextEffect(env, {prop}, cb, {parentTask}){
   }
 }
 
+function runRaceEffect(env, {effects}, cb, {digestEffect}){
+  /**
+   * 竞态执行多个effects，有一个effect完成则取消剩余其他effect
+   * effects可以是数组或者对象
+   * {label1: effect1, label2: effect2, label3: effect3, ...}
+   * [effect1, effect2, effect3, ...]
+   */
+  let keys = Object.keys(effects);
+  let completed = false;
+  let result = is.array(effects) ? new Array(effects.length) : {};
+  let cbAtKeys = {}
+
+  keys.forEach(key => {
+    const currCb = (res, isErr) => {
+      if(isErr || isEND(res)){
+        cb.cancel()
+        cb(res, isErr);
+      } else {
+        if(completed){
+          return
+        }
+        cb.cancel(); // 取消race操作
+        result[key] = res;
+        completed = true;
+        cb(result, false);
+      }
+    }
+    
+    currCb.cancel = noop;
+    cbAtKeys[key] = currCb;
+  })
+
+  cb.cancel = () => {
+    if(!completed){
+      completed = true;
+      keys.forEach(key => cbAtKeys[key].cancel())
+    }
+  }
+
+  keys.forEach(key => {
+    if(completed){
+      return
+    }
+    digestEffect(effects[key], cbAtKeys[key]);
+  })
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -255,5 +302,6 @@ export default {
   SELECT: runSelectEffect,
   FLUSH: runFlushEffect,
   SET_CONTEXT: runSetContextEffect,
-  GET_CONTEXT: runGetContextEffect
+  GET_CONTEXT: runGetContextEffect,
+  RACE: runRaceEffect
 }

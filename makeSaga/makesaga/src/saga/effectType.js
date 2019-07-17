@@ -10,3 +10,4 @@ export const SELECT = 'SELECT';
 export const FLUSH = 'FLUSH';
 export const SET_CONTEXT = 'SET_CONTEXT';
 export const GET_CONTEXT = 'GET_CONTEXT';
+export const RACE = 'RACE';

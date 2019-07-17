@@ -27,7 +27,8 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
 
   let task = newTask(env, parentContext, def, name, mainTask, mainCb); // proc返回一个task，表示当前的generator任务
   const executingContext = {
-    parentTask: task
+    parentTask: task,
+    digestEffect // 在其他地方也需要执行effect
   }
 
   mainCb.cancel = task.cancel // 附加取消逻辑，这样取消操作可以传递到子effect中
@@ -87,6 +88,12 @@ function proc(env, parentContext, iterator, isRoot, mainCb, name) { // mianCb �
     }
   }
 
+  /**
+   * 
+   * @param {*} effect 
+   * @param {fn} cb 
+   * 在执行effect之前，生成effect的回调
+   */
   function digestEffect(effect, cb){
     let settled; // 是否已经完成或者取消
 
