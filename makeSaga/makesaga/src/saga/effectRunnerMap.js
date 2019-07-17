@@ -290,6 +290,18 @@ function runRaceEffect(env, {effects}, cb, {digestEffect}){
   })
 }
 
+function runDelayEffect(env, {time}, cb){
+  try{
+    new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, time)
+    }).then(cb, error => cb(error, true))
+  } catch(e) {
+    cb(e, true)
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -303,5 +315,6 @@ export default {
   FLUSH: runFlushEffect,
   SET_CONTEXT: runSetContextEffect,
   GET_CONTEXT: runGetContextEffect,
-  RACE: runRaceEffect
+  RACE: runRaceEffect,
+  DELAY: runDelayEffect
 }
