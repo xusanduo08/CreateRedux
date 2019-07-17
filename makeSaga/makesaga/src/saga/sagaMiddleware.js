@@ -4,7 +4,7 @@
 import channel from './channel';
 import proc from './proc';
 const noop = ()=>{};
-function sagaMiddlewareFactory (){
+function sagaMiddlewareFactory ({context={}} = {}){
 
   const takers = [];  //放置action和cb
   const stdChannel = channel(takers);
@@ -24,7 +24,7 @@ function sagaMiddlewareFactory (){
         dispatch,
         getState
       }
-      let task = proc(env, {}, iterator, /** isRoot */true, noop, saga.name);
+      let task = proc(env, context, iterator, /** isRoot */true, noop, saga.name);
       return task;
     }
 
