@@ -3,45 +3,45 @@ import { createStore, applyMiddleware } from 'redux'
 import sagaMiddleware from '../sagaMiddleware';
 import * as io from '../effects';
 import { END } from '../utils/isEND';
-// test('saga parallel effects handling', () => {
-//   let actual
-//   const def = deferred()
-//   let cpsCb = {}
+test('saga parallel effects handling', () => {
+  let actual
+  const def = deferred()
+  let cpsCb = {}
 
-//   const cps = (val, cb) =>
-//     (cpsCb = {
-//       val,
-//       cb,
-//     })
+  const cps = (val, cb) =>
+    (cpsCb = {
+      val,
+      cb,
+    })
 
-//   const middleware = sagaMiddleware()
-//   const store = applyMiddleware(middleware)(createStore)(() => {})
+  const middleware = sagaMiddleware()
+  const store = applyMiddleware(middleware)(createStore)(() => {})
 
-//   function* genFn() {
-//     actual = yield io.all([def.promise, io.cps(cps, 2), io.take('action')])
-//   } 
+  function* genFn() {
+    actual = yield io.all([def.promise, io.cps(cps, 2), io.take('action')])
+  } 
 
-//   const task = middleware.run(genFn)
-//   Promise.resolve(1)
-//     .then(() => def.resolve(1))
-//     .then(() => cpsCb.cb(null, cpsCb.val))
-//     .then(() =>
-//       store.dispatch({
-//         type: 'action',
-//       }),
-//     )
-//   const expected = [
-//     1,
-//     2,
-//     {
-//       type: 'action',
-//     },
-//   ]
-//   return task.toPromise().then(() => {
-//     // saga must fulfill parallel effects
-//     expect(actual).toEqual(expected)
-//   })
-// })
+  const task = middleware.run(genFn)
+  Promise.resolve(1)
+    .then(() => def.resolve(1))
+    .then(() => cpsCb.cb(null, cpsCb.val))
+    .then(() =>
+      store.dispatch({
+        type: 'action',
+      }),
+    )
+  const expected = [
+    1,
+    2,
+    {
+      type: 'action',
+    },
+  ]
+  return task.toPromise().then(() => {
+    // saga must fulfill parallel effects
+    expect(actual).toEqual(expected)
+  })
+})
 test('saga empty array', () => {
   let actual
   const middleware = sagaMiddleware()
