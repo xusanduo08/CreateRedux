@@ -212,6 +212,14 @@ function runSelectEffect(env, {selector=v=>v, args}, cb){
   }
 }
 
+function runFlushEffect(env, {channel}, cb){
+  try{
+    channel.flush(cb);
+  } catch(e) {
+    cb(e, true);
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -221,5 +229,6 @@ export default {
   CANCELLED: runCancelledEffect,
   JOIN: runJoinEffect,
   CANCEL: runCancelEffect,
-  SELECT: runSelectEffect
+  SELECT: runSelectEffect,
+  FLUSH: runFlushEffect
 }

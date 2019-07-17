@@ -7,3 +7,4 @@ export const CANCELLED = 'CANCELLED';
 export const JOIN = 'JOIN';
 export const CANCEL = 'CANCEL';
 export const SELECT = 'SELECT';
+export const FLUSH = 'FLUSH';

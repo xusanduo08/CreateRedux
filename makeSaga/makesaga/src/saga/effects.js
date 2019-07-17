@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, APPLY } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -127,4 +127,8 @@ export function apply(context, fn, ...args){
     },
     type: CALL
   }
+}
+
+export function flush(channel){
+  return {payload:{channel}, type: FLUSH}
 }
