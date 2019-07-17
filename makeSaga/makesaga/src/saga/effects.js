@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -131,4 +131,12 @@ export function apply(context, fn, ...args){
 
 export function flush(channel){
   return {payload:{channel}, type: FLUSH}
+}
+
+export function setContext(props){
+  return {payload:{ props }, type: SET_CONTEXT}
+}
+
+export function getContext(prop){
+  return {payload: {prop}, type: GET_CONTEXT}
 }

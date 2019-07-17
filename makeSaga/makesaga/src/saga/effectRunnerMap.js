@@ -1,3 +1,4 @@
+import _extends from '@babel/runtime/helpers/extends'
 import { channel } from './channel';
 import { TAKE, ACTION_CHANNEL } from './effectType';
 import matcher from './matcher';
@@ -220,6 +221,28 @@ function runFlushEffect(env, {channel}, cb){
   }
 }
 
+function runSetContextEffect(env, {props}, cb, {parentTask}){
+  try{
+    _extends(parentTask.context, props);
+    if(Object.getOwnPropertySymbols){
+      Object.getOwnPropertySymbols(props).forEach(s => {
+        parentTask.context[s] = props[s];
+      })
+    }
+    cb();
+  } catch(e){
+    cb(e, true);
+  }
+}
+
+function runGetContextEffect(env, {prop}, cb, {parentTask}){
+  try{
+    cb(parentTask.context[prop])
+  } catch(e) {
+    cb(e, true);
+  }
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -230,5 +253,7 @@ export default {
   JOIN: runJoinEffect,
   CANCEL: runCancelEffect,
   SELECT: runSelectEffect,
-  FLUSH: runFlushEffect
+  FLUSH: runFlushEffect,
+  SET_CONTEXT: runSetContextEffect,
+  GET_CONTEXT: runGetContextEffect
 }

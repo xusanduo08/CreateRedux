@@ -8,3 +8,5 @@ export const JOIN = 'JOIN';
 export const CANCEL = 'CANCEL';
 export const SELECT = 'SELECT';
 export const FLUSH = 'FLUSH';
+export const SET_CONTEXT = 'SET_CONTEXT';
+export const GET_CONTEXT = 'GET_CONTEXT';
