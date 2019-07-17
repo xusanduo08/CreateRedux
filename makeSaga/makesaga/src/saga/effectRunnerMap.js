@@ -302,6 +302,50 @@ function runDelayEffect(env, {time}, cb){
   }
 }
 
+function runAllEffect(env, {effects}, cb, {digestEffect}){
+  /**
+   * 并行的运行多个effects，并等待它们全部完成再继续执行下去
+   * effects 可以是数组或者对象
+   * {label1: effect1, label2: effect2, label3: effect3, ...}
+   * [effect1, effect2, effect3, ...]
+   */
+
+  let keys = Object.keys(effects);
+  let result = is.array(effects) ? new Array(effects.length) : {};
+  let cbAtKeys = {};
+  let completed = false;
+  let count = 0;
+
+  if(is.array(effects) && effects.length === 0){
+    cb([]);
+    return;
+  }
+  keys.forEach(key => {
+    let currCb = (res, isErr) => {
+      if (isErr) {
+        cb(res, isErr);
+      } else {
+        count++;
+        result[key] = res;
+        if (count === keys.length) {
+          completed = true;
+          cb(result);
+        }
+      }
+    }
+    currCb.cancel = noop;
+    cbAtKeys[key] = currCb;
+  })
+  cb.cancel = ()=>{
+    if(!completed){
+      keys.forEach(key => cbAtKeys[key].cancel())
+    }
+  }
+  keys.forEach(key => {
+    digestEffect(effects[key], cbAtKeys[key]);
+  })
+}
+
 export default {
   TAKE: runTakeEffect,
   ACTION_CHANNEL: runChannelEffect,
@@ -316,5 +360,6 @@ export default {
   SET_CONTEXT: runSetContextEffect,
   GET_CONTEXT: runGetContextEffect,
   RACE: runRaceEffect,
-  DELAY: runDelayEffect
+  DELAY: runDelayEffect,
+  ALL: runAllEffect
 }

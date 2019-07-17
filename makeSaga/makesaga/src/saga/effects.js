@@ -1,4 +1,4 @@
-import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT, RACE, DELAY } from './effectType';
+import { TAKE, ACTION_CHANNEL, PUT, CALL, FORK, CANCELLED, JOIN, CANCEL, SELECT, FLUSH, SET_CONTEXT, GET_CONTEXT, RACE, DELAY, ALL } from './effectType';
 import * as is from './utils/is';
 
 /**
@@ -150,4 +150,8 @@ export function race(effects){
 
 export function delay(time){
   return {payload:{time}, type: DELAY}
+}
+
+export function all(effects){
+  return {payload:{effects}, type: ALL}
 }
